@@ -52,8 +52,17 @@ circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 ## Development
 
 ```bash
+# install dependencies
 script/bootstrap
+
+# run tests
 script/test
+
+# ...or to auto run tests with guard
+script/watch
+
+# to get a shell to play in
+script/console
 ```
 
 ## Contributing
