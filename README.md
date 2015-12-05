@@ -23,6 +23,7 @@ Or install it yourself as:
 ```ruby
 require "resiliency"
 
+# default config for circuit
 circuit_breaker = Resiliency::CircuitBreaker.new
 if circuit_breaker.request_allowed?
   begin
