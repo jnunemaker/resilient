@@ -62,6 +62,13 @@ module Resiliency
       @open = true
     end
 
+    def mark_success
+      if @open
+        @metrics.reset
+        @open = false
+      end
+    end
+
     private
 
     def under_request_volume_threshold?
