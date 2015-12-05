@@ -24,8 +24,15 @@ Or install it yourself as:
 require "resiliency"
 
 circuit_breaker = Resiliency::CircuitBreaker.new
-circuit_breaker.run do
-  # some database or flaky service
+if circuit_breaker.request_allowed?
+  begin
+    # do something expensive
+    circuit_breaker.mark_success
+  rescue => boom
+    # do fallback
+  end
+else
+  # do fallback
 end
 ```
 
