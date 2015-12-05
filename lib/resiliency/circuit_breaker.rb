@@ -5,8 +5,7 @@ module Resiliency
       attr_reader :failures
 
       def initialize
-        @failures = 0
-        @successes = 0
+        reset
       end
 
       def mark_success
@@ -24,6 +23,11 @@ module Resiliency
       def error_percentage
         ((@failures / requests.to_f) * 100).to_i
       end
+
+      def reset
+        @failures = 0
+        @successes = 0
+      end
     end
 
     class Config
@@ -40,19 +44,21 @@ module Resiliency
 
     def initialize(open: false, config: Config.new, metrics: Metrics.new)
       @open = open
+      @opened_at = 0
       @config = config
       @metrics = metrics
     end
 
     def allow_request?
-      !open?
+      !open? || allow_single_request?
     end
 
     def open?
       return true if @open
-      return true if under_request_volume_threshold?
+      return false if under_request_volume_threshold?
       return false if under_error_threshold_percentage?
 
+      @opened_at = now_in_ms
       @open = true
     end
 
@@ -64,6 +70,22 @@ module Resiliency
 
     def under_error_threshold_percentage?
       @metrics.error_percentage < @config.error_threshold_percentage
+    end
+
+    def allow_single_request?
+      now = now_in_ms
+      try_next_request_at = @opened_at + @config.sleep_window_ms
+
+      if @open && now > try_next_request_at
+        @opened_at = now + @config.sleep_window_ms
+        true
+      else
+        false
+      end
+    end
+
+    def now_in_ms
+      (Time.now.to_f * 1_000).to_i
     end
   end
 end
