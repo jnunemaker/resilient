@@ -58,18 +58,24 @@ module Resiliency
       return false if under_request_volume_threshold?
       return false if under_error_threshold_percentage?
 
+      open_circuit
+    end
+
+    def mark_success
+      close_circuit if @open
+    end
+
+    private
+
+    def open_circuit
       @opened_at = now_in_ms
       @open = true
     end
 
-    def mark_success
-      if @open
-        @metrics.reset
-        @open = false
-      end
+    def close_circuit
+      @metrics.reset
+      @open = false
     end
-
-    private
 
     def under_request_volume_threshold?
       @metrics.requests < @config.request_volume_threshold
