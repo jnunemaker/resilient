@@ -11,6 +11,7 @@ module Resiliency
     end
 
     def allow_request?
+      return false if @config.force_open
       !open? || allow_single_request?
     end
 
