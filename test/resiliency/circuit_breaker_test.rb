@@ -95,12 +95,9 @@ module Resiliency
       config = CircuitBreaker::Config.new(request_volume_threshold: 5)
       metrics = CircuitBreaker::Metrics.new
       metrics = CircuitBreaker::Metrics.new
-      metrics.mark_failure
-      metrics.mark_failure
-      metrics.mark_failure
-      metrics.mark_failure
-
+      4.times { metrics.mark_failure }
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       refute circuit_breaker.open?
     end
 
