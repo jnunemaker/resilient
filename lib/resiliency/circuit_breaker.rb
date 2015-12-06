@@ -14,14 +14,6 @@ module Resiliency
       !open? || allow_single_request?
     end
 
-    def open?
-      return true if @open
-      return false if under_request_volume_threshold?
-      return false if under_error_threshold_percentage?
-
-      open_circuit
-    end
-
     def mark_success
       close_circuit if @open
     end
@@ -48,6 +40,14 @@ module Resiliency
 
     def under_error_threshold_percentage?
       @metrics.error_percentage < @config.error_threshold_percentage
+    end
+
+    def open?
+      return true if @open
+      return false if under_request_volume_threshold?
+      return false if under_error_threshold_percentage?
+
+      open_circuit
     end
 
     def allow_single_request?
