@@ -12,6 +12,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       assert circuit_breaker.allow_request?
     end
 
@@ -24,6 +25,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       refute circuit_breaker.allow_request?
     end
 
@@ -37,6 +39,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       refute circuit_breaker.allow_request?
 
       Timecop.freeze(Time.now + 4) do
@@ -64,6 +67,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       assert circuit_breaker.open?
     end
 
@@ -76,6 +80,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       refute circuit_breaker.open?
     end
 
@@ -88,6 +93,7 @@ module Resiliency
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
       assert circuit_breaker.open?
     end
 
