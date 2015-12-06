@@ -26,6 +26,10 @@ module Resiliency
       close_circuit if @open
     end
 
+    def mark_failure
+      @metrics.mark_failure
+    end
+
     private
 
     def open_circuit

@@ -118,5 +118,19 @@ module Resiliency
       circuit_breaker.mark_success
       assert circuit_breaker.allow_request?
     end
+
+    def test_mark_failure
+      config = CircuitBreaker::Config.new({
+        error_threshold_percentage: 49,
+        request_volume_threshold: 2,
+      })
+      metrics = CircuitBreaker::Metrics.new
+      metrics.mark_success
+      circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
+      assert circuit_breaker.allow_request?
+      circuit_breaker.mark_failure
+      refute circuit_breaker.allow_request?
+    end
   end
 end
