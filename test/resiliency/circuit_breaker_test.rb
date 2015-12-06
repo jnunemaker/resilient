@@ -132,8 +132,10 @@ module Resiliency
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
 
       assert circuit_breaker.allow_request?
+      assert_equal 0, metrics.failures
       circuit_breaker.mark_failure
       refute circuit_breaker.allow_request?
+      assert_equal 1, metrics.failures
     end
   end
 end
