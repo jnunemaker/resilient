@@ -92,6 +92,20 @@ module Resiliency
       refute circuit_breaker.allow_request?
     end
 
+    def test_allow_request_when_forced_closed_but_over_threshold
+      config = CircuitBreaker::Config.new({
+        error_threshold_percentage: 49,
+        request_volume_threshold: 2,
+        force_closed: true,
+      })
+      metrics = CircuitBreaker::Metrics.new
+      metrics.mark_success
+      metrics.mark_failure
+      circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
+
+      assert circuit_breaker.allow_request?
+    end
+
     def test_mark_success
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
