@@ -9,6 +9,11 @@ module Resiliency
       end
 
       include MetricsInterfaceTest
+
+      def test_error_percentage
+        metrics = Metrics.new
+        assert_equal 0, metrics.error_percentage
+      end
     end
   end
 end
