@@ -2,6 +2,8 @@
 
 Some tools for resilient in ruby. For now, just a circuit breaker (~~stolen from~~ based on [hystrix](https://github.com/netflix/hystrix)). Soon much more...
 
+Nothing asynchronous or thread safe yet either.
+
 ## Installation
 
 Add this line to your application's Gemfile:
