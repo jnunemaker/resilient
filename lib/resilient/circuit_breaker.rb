@@ -1,12 +1,12 @@
 require "resilient/circuit_breaker/rolling_metrics"
-require "resilient/circuit_breaker/config"
+require "resilient/circuit_breaker/rolling_config"
 
 module Resilient
   class CircuitBreaker
     attr_reader :metrics
     attr_reader :config
 
-    def initialize(open: false, config: Config.new, metrics: RollingMetrics.new)
+    def initialize(open: false, config: RollingConfig.new, metrics: RollingMetrics.new)
       @open = open
       @opened_at = 0
       @config = config

@@ -1,6 +1,6 @@
 module Resilient
   class CircuitBreaker
-    class Config
+    class RollingConfig
       attr_reader :error_threshold_percentage
       attr_reader :sleep_window_seconds
       attr_reader :request_volume_threshold

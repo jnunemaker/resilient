@@ -41,7 +41,7 @@ end
 customize config of circuit:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new({
+config = Resilient::CircuitBreaker::RollingConfig.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
@@ -56,7 +56,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 force the circuit to be always open:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new(force_open: true)
+config = Resilient::CircuitBreaker::RollingConfig.new(force_open: true)
 circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
@@ -64,7 +64,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 force the circuit to be always closed:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new(force_closed: true)
+config = Resilient::CircuitBreaker::RollingConfig.new(force_closed: true)
 circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
