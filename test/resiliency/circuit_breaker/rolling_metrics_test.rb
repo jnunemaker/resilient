@@ -4,6 +4,12 @@ require "resiliency/circuit_breaker/rolling_metrics"
 module Resiliency
   class CircuitBreaker
     class RollingMetricsTest < Minitest::Test
+      def setup
+        @object = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+      end
+
+      include MetricsInterfaceTest
+
       def test_mark_success
         metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.mark_success
