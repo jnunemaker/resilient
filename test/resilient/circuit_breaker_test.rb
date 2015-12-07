@@ -1,7 +1,7 @@
 require "test_helper"
-require "resiliency/circuit_breaker"
+require "resilient/circuit_breaker"
 
-module Resiliency
+module Resilient
   class CircuitBreakerTest < Minitest::Test
     def setup
       @object = CircuitBreaker.new

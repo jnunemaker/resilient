@@ -1,4 +1,4 @@
-module Resiliency
+module Resilient
   class CircuitBreaker
     class Config
       attr_reader :error_threshold_percentage

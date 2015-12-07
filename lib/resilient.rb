@@ -1,5 +1,5 @@
-require "resiliency/version"
+require "resilient/version"
 
-module Resiliency
+module Resilient
   # Your code goes here...
 end

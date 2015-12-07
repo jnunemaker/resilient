@@ -1,4 +1,4 @@
-module Resiliency
+module Resilient
   class CircuitBreaker
     class RollingMetrics
       class Bucket

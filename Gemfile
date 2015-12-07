@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in resiliency.gemspec
+# Specify your gem's dependencies in resilient.gemspec
 gemspec
 
 gem "guard", "~> 2.13.0"

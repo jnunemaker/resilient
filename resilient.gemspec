@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'resiliency/version'
+require 'resilient/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "resiliency"
-  spec.version       = Resiliency::VERSION
+  spec.name          = "resilient"
+  spec.version       = Resilient::VERSION
   spec.authors       = ["John Nunemaker"]
   spec.email         = ["nunemaker@gmail.com"]
 

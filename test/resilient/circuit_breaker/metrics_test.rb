@@ -1,7 +1,7 @@
 require "test_helper"
-require "resiliency/circuit_breaker/metrics"
+require "resilient/circuit_breaker/metrics"
 
-module Resiliency
+module Resilient
   class CircuitBreaker
     class MetricsTest < Minitest::Test
       def setup

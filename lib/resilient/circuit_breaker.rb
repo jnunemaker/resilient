@@ -1,7 +1,7 @@
-require "resiliency/circuit_breaker/rolling_metrics"
-require "resiliency/circuit_breaker/config"
+require "resilient/circuit_breaker/rolling_metrics"
+require "resilient/circuit_breaker/config"
 
-module Resiliency
+module Resilient
   class CircuitBreaker
     def initialize(open: false, config: Config.new, metrics: RollingMetrics.new)
       @open = open

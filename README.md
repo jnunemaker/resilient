@@ -1,13 +1,13 @@
-# Resiliency
+# Resilient
 
-Some tools for resiliency in ruby.
+Some tools for resilient in ruby.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "resiliency"
+gem "resilient"
 ```
 
 And then execute:
@@ -16,15 +16,15 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install resiliency
+    $ gem install resilient
 
 ## Usage
 
 ```ruby
-require "resiliency"
+require "resilient"
 
 # default config for circuit
-circuit_breaker = Resiliency::CircuitBreaker.new
+circuit_breaker = Resilient::CircuitBreaker.new
 if circuit_breaker.request_allowed?
   begin
     # do something expensive
@@ -42,7 +42,7 @@ end
 customize config of circuit:
 
 ```ruby
-config = Resiliency::CircuitBreaker::Config.new({
+config = Resilient::CircuitBreaker::Config.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
@@ -50,34 +50,34 @@ config = Resiliency::CircuitBreaker::Config.new({
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
-circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
+circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
 
 force the circuit to be always open:
 
 ```ruby
-config = Resiliency::CircuitBreaker::Config.new(force_open: true)
-circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
+config = Resilient::CircuitBreaker::Config.new(force_open: true)
+circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
 
 force the circuit to be always closed:
 
 ```ruby
-config = Resiliency::CircuitBreaker::Config.new(force_closed: true)
-circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
+config = Resilient::CircuitBreaker::Config.new(force_closed: true)
+circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
 
 customize rolling window to be 10 buckets of 1 second each (10 seconds in all):
 
 ```ruby
-metrics = Resiliency::CircuitBreaker::RollingMetrics.new({
+metrics = Resilient::CircuitBreaker::RollingMetrics.new({
   number_of_buckets: 10,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resiliency::CircuitBreaker.new(metrics: metrics)
+circuit_breaker = Resilient::CircuitBreaker.new(metrics: metrics)
 # etc etc etc
 ```
 
@@ -99,7 +99,7 @@ script/console
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/jnunemaker/resiliency.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jnunemaker/resilient.
 
 ## License
 
