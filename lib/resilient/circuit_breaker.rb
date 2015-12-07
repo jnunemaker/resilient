@@ -26,7 +26,7 @@ module Resilient
       return false if @config.force_open
       return true if @config.force_closed
 
-      !open? || allow_single_request?
+      closed? || allow_single_request?
     end
 
     def mark_success
@@ -71,6 +71,10 @@ module Resilient
       return false if under_error_threshold_percentage?
 
       open_circuit
+    end
+
+    def closed?
+      !open?
     end
 
     def allow_single_request?
