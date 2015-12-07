@@ -37,8 +37,11 @@ else
   # do fallback
 end
 
+```
 
-# customize config of circuit
+customize config of circuit:
+
+```ruby
 config = Resiliency::CircuitBreaker::Config.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
@@ -49,21 +52,27 @@ config = Resiliency::CircuitBreaker::Config.new({
 })
 circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 # etc etc etc
+```
 
+force the circuit to be always open:
 
-# force the circuit to be always open
+```ruby
 config = Resiliency::CircuitBreaker::Config.new(force_open: true)
 circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 # etc etc etc
+```
 
+force the circuit to be always closed:
 
-# force the circuit to be always closed
+```ruby
 config = Resiliency::CircuitBreaker::Config.new(force_closed: true)
 circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 # etc etc etc
+```
 
+customize rolling window to be 10 buckets of 1 second each (10 seconds in all):
 
-# customize rolling window to be 10 buckets of 1 second each (10 seconds in all)
+```ruby
 metrics = Resiliency::CircuitBreaker::RollingMetrics.new({
   number_of_buckets: 10,
   bucket_size_in_seconds: 1,
