@@ -1,28 +1,8 @@
+require "resiliency/circuit_breaker/rolling_metrics/bucket"
+
 module Resiliency
   class CircuitBreaker
     class RollingMetrics
-      class Bucket
-        attr_reader :start
-        attr_reader :finish
-        attr_reader :successes
-        attr_reader :failures
-
-        def initialize(start, finish)
-          @start = start
-          @finish = finish
-          @successes = 0
-          @failures = 0
-        end
-
-        def mark_success
-          @successes += 1
-        end
-
-        def mark_failure
-          @failures += 1
-        end
-      end
-
       attr_reader :number_of_buckets
       attr_reader :bucket_size_in_seconds
       attr_reader :buckets
