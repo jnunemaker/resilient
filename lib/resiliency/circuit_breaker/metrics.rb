@@ -10,10 +10,12 @@ module Resiliency
 
       def mark_success
         @successes += 1
+        nil
       end
 
       def mark_failure
         @failures += 1
+        nil
       end
 
       def requests
@@ -28,6 +30,7 @@ module Resiliency
       def reset
         @failures = 0
         @successes = 0
+        nil
       end
     end
   end

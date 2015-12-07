@@ -5,38 +5,41 @@ module Resiliency
     class RollingMetrics
       attr_reader :number_of_buckets
       attr_reader :bucket_size_in_seconds
+      attr_reader :buckets
 
       def initialize(number_of_buckets:, bucket_size_in_seconds:)
         @number_of_buckets = number_of_buckets
         @bucket_size_in_seconds = bucket_size_in_seconds
-        @buckets = []
         reset
       end
 
       def mark_success
-        current_bucket.mark_success
+        timestamp = Time.now.to_i
+        bucket(timestamp).mark_success
+        prune_buckets(timestamp)
+        nil
       end
 
       def mark_failure
-        current_bucket.mark_failure
+        timestamp = Time.now.to_i
+        bucket(timestamp).mark_failure
+        prune_buckets(timestamp)
+        nil
       end
 
       def successes
         prune_buckets
-        sum = 0
-        @buckets.each { |bucket| sum += bucket.successes }
-        sum
+        @buckets.inject(0) { |sum, bucket| sum += bucket.successes }
       end
 
       def failures
         prune_buckets
-        sum = 0
-        @buckets.each { |bucket| sum += bucket.failures }
-        sum
+        @buckets.inject(0) { |sum, bucket| sum += bucket.failures }
       end
 
       def requests
-        successes + failures
+        prune_buckets
+        @buckets.inject(0) { |sum, bucket| sum += bucket.failures + bucket.successes }
       end
 
       def error_percentage
@@ -45,20 +48,19 @@ module Resiliency
       end
 
       def reset
-        @buckets.clear
+        @buckets = []
+        nil
       end
 
       private
 
-      def current_bucket
-        timestamp = Time.now.to_i
+      def bucket(timestamp)
         bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }
         return bucket if bucket
 
         bucket = Bucket.new(timestamp, timestamp + @bucket_size_in_seconds - 1)
         @buckets.push bucket
 
-        prune_buckets(timestamp)
         bucket
       end
 

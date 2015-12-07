@@ -22,22 +22,22 @@ module Resiliency
 
         Timecop.freeze(now) do
           metrics.mark_success
-          assert_equal 1, metrics.successes
+          assert_equal 1, metrics.buckets.length
         end
 
         Timecop.freeze(now + 1) do
           metrics.mark_success
-          assert_equal 2, metrics.successes
+          assert_equal 2, metrics.buckets.length
         end
 
         Timecop.freeze(now + 4) do
           metrics.mark_success
-          assert_equal 3, metrics.successes
+          assert_equal 3, metrics.buckets.length
         end
 
         Timecop.freeze(now + 9) do
           metrics.mark_success
-          assert_equal 1, metrics.successes
+          assert_equal 1, metrics.buckets.length
         end
       end
 
@@ -53,22 +53,22 @@ module Resiliency
 
         Timecop.freeze(now) do
           metrics.mark_failure
-          assert_equal 1, metrics.failures
+          assert_equal 1, metrics.buckets.length
         end
 
         Timecop.freeze(now + 1) do
           metrics.mark_failure
-          assert_equal 2, metrics.failures
+          assert_equal 2, metrics.buckets.length
         end
 
         Timecop.freeze(now + 4) do
           metrics.mark_failure
-          assert_equal 3, metrics.failures
+          assert_equal 3, metrics.buckets.length
         end
 
         Timecop.freeze(now + 9) do
           metrics.mark_failure
-          assert_equal 1, metrics.failures
+          assert_equal 1, metrics.buckets.length
         end
       end
 
