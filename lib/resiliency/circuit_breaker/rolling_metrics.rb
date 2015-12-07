@@ -7,9 +7,9 @@ module Resiliency
       attr_reader :bucket_size_in_seconds
       attr_reader :buckets
 
-      def initialize(number_of_buckets:, bucket_size_in_seconds:)
-        @number_of_buckets = number_of_buckets
-        @bucket_size_in_seconds = bucket_size_in_seconds
+      def initialize(options = {})
+        @number_of_buckets = options.fetch(:number_of_buckets, 6)
+        @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
         reset
       end
 
