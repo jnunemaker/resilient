@@ -5,7 +5,6 @@ module Resiliency
     class RollingMetrics
       attr_reader :number_of_buckets
       attr_reader :bucket_size_in_seconds
-      attr_reader :buckets
 
       def initialize(number_of_buckets:, bucket_size_in_seconds:)
         @number_of_buckets = number_of_buckets
