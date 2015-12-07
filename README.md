@@ -1,6 +1,6 @@
 # Resilient
 
-Some tools for resilient in ruby.
+Some tools for resilient in ruby. For now, just a circuit breaker (~~stolen from~~ based on [hystrix](https://github.com/netflix/hystrix)). Soon much more...
 
 ## Installation
 
