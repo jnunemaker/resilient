@@ -7,7 +7,14 @@ module Resilient
       @open = open
       @opened_at = 0
       @config = config
-      @metrics = metrics
+      @metrics = if metrics
+        metrics
+      else
+        RollingMetrics.new({
+          number_of_buckets: config.number_of_buckets,
+          bucket_size_in_seconds: config.bucket_size_in_seconds,
+        })
+      end
     end
 
     def allow_request?
