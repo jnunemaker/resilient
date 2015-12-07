@@ -5,6 +5,7 @@ module Resilient
   class CircuitBreaker
     attr_reader :metrics
     attr_reader :config
+    attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
 
     def initialize(open: false, config: RollingConfig.new, metrics: RollingMetrics.new)
