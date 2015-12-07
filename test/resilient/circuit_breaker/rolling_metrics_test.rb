@@ -8,7 +8,7 @@ module Resilient
         @object = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
       end
 
-      include MetricsInterfaceTest
+      include RollingMetricsInterfaceTest
 
       def test_mark_success
         metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)

@@ -1,4 +1,4 @@
-module MetricsInterfaceTest
+module RollingMetricsInterfaceTest
   def test_responds_to_mark_success
     assert_respond_to @object, :mark_success
   end
