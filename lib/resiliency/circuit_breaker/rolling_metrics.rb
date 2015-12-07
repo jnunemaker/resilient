@@ -53,9 +53,7 @@ module Resiliency
 
       def current_bucket
         timestamp = Time.now.to_i
-        bucket = @buckets.detect { |bucket|
-          timestamp >= bucket.start && timestamp < (bucket.start + @bucket_size_in_seconds )
-        }
+        bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }
         return bucket if bucket
 
         bucket = Bucket.new(timestamp, timestamp + @bucket_size_in_seconds - 1)
@@ -67,7 +65,7 @@ module Resiliency
 
       def prune_buckets(timestamp = Time.now.to_i)
         cutoff = timestamp - (@number_of_buckets * @bucket_size_in_seconds)
-        @buckets.delete_if { |bucket| bucket.finish <= cutoff }
+        @buckets.delete_if { |bucket| bucket.prune?(cutoff) }
       end
     end
   end
