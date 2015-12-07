@@ -12,7 +12,7 @@ module Resilient
     def test_allow_request_when_under_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 51,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
@@ -25,7 +25,7 @@ module Resilient
     def test_allow_request_when_over_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
@@ -38,7 +38,7 @@ module Resilient
     def test_allow_request_when_at_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 50,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
@@ -51,7 +51,6 @@ module Resilient
     def test_allow_request_when_under_request_volume_threshold
       config = CircuitBreaker::Config.new(request_volume_threshold: 5)
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       4.times { metrics.mark_failure }
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
 
@@ -61,7 +60,7 @@ module Resilient
     def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
         sleep_window_seconds: 5,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
@@ -87,7 +86,7 @@ module Resilient
     def test_allow_request_when_forced_open_but_under_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 51,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
         force_open: true,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
@@ -101,7 +100,7 @@ module Resilient
     def test_allow_request_when_forced_closed_but_over_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
         force_closed: true,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
@@ -115,7 +114,7 @@ module Resilient
     def test_mark_success
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
@@ -130,7 +129,7 @@ module Resilient
     def test_mark_failure
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
-        request_volume_threshold: 2,
+        request_volume_threshold: 0,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
