@@ -3,6 +3,12 @@ require "resiliency/circuit_breaker"
 
 module Resiliency
   class CircuitBreakerTest < Minitest::Test
+    def setup
+      @object = CircuitBreaker.new
+    end
+
+    include CircuitBreakerInterfaceTest
+
     def test_allow_request_when_under_threshold
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 51,
