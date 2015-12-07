@@ -14,7 +14,7 @@ module Resilient
         error_threshold_percentage: 51,
         request_volume_threshold: 0,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -27,7 +27,7 @@ module Resilient
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -40,7 +40,7 @@ module Resilient
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -50,7 +50,7 @@ module Resilient
 
     def test_allow_request_when_under_request_volume_threshold
       config = CircuitBreaker::Config.new(request_volume_threshold: 5)
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       4.times { metrics.mark_failure }
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
 
@@ -63,7 +63,7 @@ module Resilient
         request_volume_threshold: 0,
         sleep_window_seconds: 5,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -89,7 +89,7 @@ module Resilient
         request_volume_threshold: 0,
         force_open: true,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -103,7 +103,7 @@ module Resilient
         request_volume_threshold: 0,
         force_closed: true,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -116,7 +116,7 @@ module Resilient
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       metrics.mark_failure
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
@@ -131,7 +131,7 @@ module Resilient
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
       })
-      metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
+      metrics = CircuitBreaker::RollingMetrics.new
       metrics.mark_success
       circuit_breaker = CircuitBreaker.new(config: config, metrics: metrics)
 
