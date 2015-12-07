@@ -16,8 +16,8 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 guard :minitest do
-  watch(%r{^test/(.*)\/?(.*)_test\.rb$})
-  watch(%r{^lib/(.*/)?([^/]+)\.rb$}) { |m| "test" }
+  watch(%r{^test/(.*)\/?(.*)_test\.rb$}) { "test" }
+  watch(%r{^lib/(.*/)?([^/]+)\.rb$}) { "test" }
   watch(%r{^test/test_helper\.rb$}) { "test" }
   watch(%r{test/support/.*}) { "test" }
 end
