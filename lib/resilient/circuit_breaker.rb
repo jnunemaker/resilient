@@ -5,10 +5,11 @@ module Resilient
   class CircuitBreaker
     attr_reader :metrics
     attr_reader :config
+    attr_reader :opened_or_last_checked_at_epoch
 
     def initialize(open: false, config: RollingConfig.new, metrics: RollingMetrics.new)
       @open = open
-      @opened_at = 0
+      @opened_or_last_checked_at_epoch = 0
       @config = config
       @metrics = if metrics
         metrics
@@ -37,7 +38,7 @@ module Resilient
 
     def reset
       @open = false
-      @opened_at = 0
+      @opened_or_last_checked_at_epoch = 0
       @metrics.reset
       nil
     end
@@ -46,12 +47,12 @@ module Resilient
 
     def open_circuit
       @open = true
-      @opened_at = Time.now.to_i
+      @opened_or_last_checked_at_epoch = Time.now.to_i
     end
 
     def close_circuit
       @open = false
-      @opened_at = 0
+      @opened_or_last_checked_at_epoch = 0
       @metrics.reset
     end
 
@@ -72,11 +73,11 @@ module Resilient
     end
 
     def allow_single_request?
-      try_next_request_at = @opened_at + @config.sleep_window_seconds
+      try_next_request_at = @opened_or_last_checked_at_epoch + @config.sleep_window_seconds
       now = Time.now.to_i
 
       if @open && now > try_next_request_at
-        @opened_at = now + @config.sleep_window_seconds
+        @opened_or_last_checked_at_epoch = now + @config.sleep_window_seconds
         true
       else
         false

@@ -143,11 +143,11 @@ module Resilient
       assert_equal false, circuit_breaker.instance_variable_get("@open")
     end
 
-    def test_reset_sets_opened_at_to_zero
+    def test_reset_sets_opened_or_last_checked_at_epoch_to_zero
       circuit_breaker = CircuitBreaker.new
       circuit_breaker.reset
 
-      assert_equal 0, circuit_breaker.instance_variable_get("@opened_at")
+      assert_equal 0, circuit_breaker.opened_or_last_checked_at_epoch
     end
 
     private
