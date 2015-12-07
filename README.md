@@ -21,7 +21,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-require "resilient"
+require "resilient/circuit_breaker"
 
 # default config for circuit
 circuit_breaker = Resilient::CircuitBreaker.new
