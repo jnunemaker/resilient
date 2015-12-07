@@ -39,7 +39,7 @@ module Resiliency
 
       def requests
         prune_buckets
-        @buckets.inject(0) { |sum, bucket| sum += bucket.failures + bucket.successes }
+        @buckets.inject(0) { |sum, bucket| sum += bucket.requests }
       end
 
       def error_percentage

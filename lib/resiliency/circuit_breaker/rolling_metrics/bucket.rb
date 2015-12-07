@@ -20,6 +20,10 @@ module Resiliency
           @failures += 1
         end
 
+        def requests
+          @successes + @failures
+        end
+
         def include?(timestamp)
           timestamp >= @timestamp_start && timestamp <= @timestamp_end
         end
