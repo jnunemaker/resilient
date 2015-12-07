@@ -3,8 +3,11 @@ require "resilient/circuit_breaker/config"
 
 module Resilient
   class CircuitBreaker
-    def initialize(config: Config.new, metrics: RollingMetrics.new)
-      @open = false
+    attr_reader :metrics
+    attr_reader :config
+
+    def initialize(open: false, config: Config.new, metrics: RollingMetrics.new)
+      @open = open
       @opened_at = 0
       @config = config
       @metrics = if metrics
