@@ -10,4 +10,8 @@ module CircuitBreakerInterfaceTest
   def test_responds_to_mark_failure
     assert_respond_to @object, :mark_failure
   end
+
+  def test_responds_to_reset
+    assert_respond_to @object, :reset
+  end
 end

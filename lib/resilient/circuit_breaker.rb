@@ -32,6 +32,13 @@ module Resilient
       @metrics.mark_failure
     end
 
+    def reset
+      @open = false
+      @opened_at = 0
+      @metrics.reset
+      nil
+    end
+
     private
 
     def open_circuit
