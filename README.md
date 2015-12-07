@@ -52,7 +52,8 @@ circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 
 
 # force the circuit to be always open
-config = Resiliency::CircuitBreaker::Config.new(force_open: true) circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
+config = Resiliency::CircuitBreaker::Config.new(force_open: true)
+circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 
 
 # force the circuit to be always closed
