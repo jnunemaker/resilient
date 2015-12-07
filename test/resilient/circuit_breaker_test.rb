@@ -9,7 +9,7 @@ module Resilient
 
     include CircuitBreakerInterfaceTest
 
-    def test_allow_request_when_under_threshold
+    def test_allow_request_when_under_error_threshold_percentage
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 51,
         request_volume_threshold: 0,
@@ -22,7 +22,7 @@ module Resilient
       assert circuit_breaker.allow_request?
     end
 
-    def test_allow_request_when_over_threshold
+    def test_allow_request_when_over_error_threshold_percentage
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
@@ -35,7 +35,7 @@ module Resilient
       refute circuit_breaker.allow_request?
     end
 
-    def test_allow_request_when_at_threshold
+    def test_allow_request_when_at_error_threshold_percentage
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
