@@ -31,6 +31,7 @@ if circuit_breaker.request_allowed?
     circuit_breaker.mark_success
   rescue => boom
     # do fallback
+    circuit_breaker.mark_failure
   end
 else
   # do fallback
@@ -40,13 +41,22 @@ end
 config = Resiliency::CircuitBreaker::Config.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
+
   # do not try request again for 5 seconds
   sleep_window_ms: 5000,
+
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
 circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 # etc etc etc
+
+# force the circuit to be always open
+config = Resiliency::CircuitBreaker::Config.new(force_open: true) circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
+
+# force the circuit to be always closed
+config = Resiliency::CircuitBreaker::Config.new(force_closed: true)
+circuit_breaker = Resiliency::CircuitBreaker.new(config: config)
 ```
 
 ## Development
