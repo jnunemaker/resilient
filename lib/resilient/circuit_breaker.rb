@@ -42,14 +42,14 @@ module Resilient
     private
 
     def open_circuit
-      @opened_at = Time.now.to_i
       @open = true
+      @opened_at = Time.now.to_i
     end
 
     def close_circuit
+      @open = false
       @opened_at = 0
       @metrics.reset
-      @open = false
     end
 
     def under_request_volume_threshold?
