@@ -36,7 +36,6 @@ if circuit_breaker.request_allowed?
 else
   # do fallback
 end
-
 ```
 
 customize config of circuit:
@@ -46,7 +45,7 @@ config = Resilient::CircuitBreaker::Config.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
-  sleep_window_ms: 5000,
+  sleep_window_seconds: 5,
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })

@@ -28,7 +28,7 @@ module Resilient
     private
 
     def open_circuit
-      @opened_at = now_in_ms
+      @opened_at = Time.now.to_i
       @open = true
     end
 
@@ -54,19 +54,15 @@ module Resilient
     end
 
     def allow_single_request?
-      now = now_in_ms
-      try_next_request_at = @opened_at + @config.sleep_window_ms
+      try_next_request_at = @opened_at + @config.sleep_window_seconds
+      now = Time.now.to_i
 
       if @open && now > try_next_request_at
-        @opened_at = now + @config.sleep_window_ms
+        @opened_at = now + @config.sleep_window_seconds
         true
       else
         false
       end
-    end
-
-    def now_in_ms
-      (Time.now.to_f * 1_000).to_i
     end
   end
 end

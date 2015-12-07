@@ -58,11 +58,11 @@ module Resilient
       assert circuit_breaker.allow_request?
     end
 
-    def test_allow_request_with_circuit_open_but_after_sleep_window_ms
+    def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
       config = CircuitBreaker::Config.new({
         error_threshold_percentage: 49,
         request_volume_threshold: 2,
-        sleep_window_ms: 5000,
+        sleep_window_seconds: 5,
       })
       metrics = CircuitBreaker::RollingMetrics.new(number_of_buckets: 10, bucket_size_in_seconds: 1)
       metrics.mark_success
