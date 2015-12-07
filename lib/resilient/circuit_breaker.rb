@@ -40,6 +40,7 @@ module Resilient
     end
 
     def close_circuit
+      @opened_at = 0
       @metrics.reset
       @open = false
     end
