@@ -57,31 +57,41 @@ module Resilient
     end
 
     def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
-      sleep_window_seconds = 5
+      now = Time.now
       config = CircuitBreaker::RollingConfig.new(default_test_config_options({
         error_threshold_percentage: 49,
-        sleep_window_seconds: sleep_window_seconds,
+        sleep_window_seconds: 5,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      refute circuit_breaker.allow_request?,
-        debug_circuit_breaker(circuit_breaker)
+      assert_equal 0, circuit_breaker.opened_or_last_checked_at_epoch
 
-      Timecop.freeze(Time.now + sleep_window_seconds - 1) do
+      Timecop.freeze(now) do
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
+        assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
       end
 
-      Timecop.freeze(Time.now + sleep_window_seconds) do
+      Timecop.freeze(now + config.sleep_window_seconds - 1) do
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
+        assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
       end
 
-      Timecop.freeze(Time.now + sleep_window_seconds + 1) do
+      Timecop.freeze(now + config.sleep_window_seconds) do
+        refute circuit_breaker.allow_request?,
+          debug_circuit_breaker(circuit_breaker)
+        assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
+      end
+
+      Timecop.freeze(now + config.sleep_window_seconds + 1) do
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
+
+        assert_equal (now + config.sleep_window_seconds + 1).to_i,
+          circuit_breaker.opened_or_last_checked_at_epoch
       end
     end
 

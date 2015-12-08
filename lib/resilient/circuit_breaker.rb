@@ -82,11 +82,10 @@ module Resilient
     end
 
     def allow_single_request?
-      try_next_request_at = @opened_or_last_checked_at_epoch + @config.sleep_window_seconds
       now = Time.now.to_i
 
-      if @open && now > try_next_request_at
-        @opened_or_last_checked_at_epoch = now + @config.sleep_window_seconds
+      if @open && now > (@opened_or_last_checked_at_epoch + @config.sleep_window_seconds)
+        @opened_or_last_checked_at_epoch = now
         true
       else
         false
