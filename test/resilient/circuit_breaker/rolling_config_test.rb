@@ -3,7 +3,7 @@ require "resilient/circuit_breaker/rolling_config"
 
 module Resilient
   class CircuitBreaker
-    class RollingConfigTest < Minitest::Test
+    class RollingConfigTest < Resilient::Test
       def setup
         @object = RollingConfig.new
       end

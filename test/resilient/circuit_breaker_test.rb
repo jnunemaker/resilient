@@ -2,7 +2,7 @@ require "test_helper"
 require "resilient/circuit_breaker"
 
 module Resilient
-  class CircuitBreakerTest < Minitest::Test
+  class CircuitBreakerTest < Resilient::Test
     def setup
       @object = CircuitBreaker.new
     end
@@ -17,7 +17,8 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      assert circuit_breaker.allow_request?
+      assert circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_allow_request_when_over_error_threshold_percentage
@@ -28,7 +29,8 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      refute circuit_breaker.allow_request?
+      refute circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_allow_request_when_at_error_threshold_percentage
@@ -39,7 +41,8 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      refute circuit_breaker.allow_request?
+      refute circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_allow_request_when_under_request_volume_threshold
@@ -49,7 +52,8 @@ module Resilient
       circuit_breaker = CircuitBreaker.new(config: config)
       4.times { circuit_breaker.metrics.mark_failure }
 
-      assert circuit_breaker.allow_request?
+      assert circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
@@ -62,18 +66,22 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      refute circuit_breaker.allow_request?
+      refute circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
 
       Timecop.freeze(Time.now + sleep_window_seconds - 1) do
-        refute circuit_breaker.allow_request?
+        refute circuit_breaker.allow_request?,
+          debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(Time.now + sleep_window_seconds) do
-        refute circuit_breaker.allow_request?
+        refute circuit_breaker.allow_request?,
+          debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(Time.now + sleep_window_seconds + 1) do
-        assert circuit_breaker.allow_request?
+        assert circuit_breaker.allow_request?,
+          debug_circuit_breaker(circuit_breaker)
       end
     end
 
@@ -86,7 +94,8 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      refute circuit_breaker.allow_request?
+      refute circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_allow_request_when_forced_closed_but_over_threshold
@@ -99,7 +108,8 @@ module Resilient
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
-      assert circuit_breaker.allow_request?
+      assert circuit_breaker.allow_request?,
+        debug_circuit_breaker(circuit_breaker)
     end
 
     def test_mark_success_when_open_does_reset_metrics

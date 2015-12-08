@@ -2,6 +2,8 @@ module Resilient
   class CircuitBreaker
     class RollingMetrics
       class Bucket
+        attr_reader :timestamp_start
+        attr_reader :timestamp_end
         attr_reader :successes
         attr_reader :failures
 
@@ -22,6 +24,16 @@ module Resilient
 
         def requests
           @successes + @failures
+        end
+
+        def error_percentage
+          return 0 if @failures == 0 || requests == 0
+          ((@failures / requests.to_f) * 100).to_i
+        end
+
+        def size_in_seconds
+          # inclusive of start second so we add 1
+          @timestamp_end - @timestamp_start + 1
         end
 
         def include?(timestamp)

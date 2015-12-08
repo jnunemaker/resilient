@@ -3,7 +3,7 @@ require "resilient/circuit_breaker/rolling_metrics"
 
 module Resilient
   class CircuitBreaker
-    class RollingMetricsTest < Minitest::Test
+    class RollingMetricsTest < Resilient::Test
       def setup
         @object = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
       end
