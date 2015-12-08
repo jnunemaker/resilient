@@ -22,22 +22,47 @@ module Resilient
 
         Timecop.freeze(now) do
           metrics.mark_success
-          assert_equal 1, metrics.buckets.length
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 1) do
           metrics.mark_success
-          assert_equal 2, metrics.buckets.length
+          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 4) do
           metrics.mark_success
-          assert_equal 3, metrics.buckets.length
+          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
-        Timecop.freeze(now + 9) do
+        Timecop.freeze(now + 10) do
           metrics.mark_success
-          assert_equal 1, metrics.buckets.length
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+        end
+      end
+
+      def test_mark_success_prunes_with_greater_than_one_second_bucket_size
+        now = Time.now
+        metrics = RollingMetrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
+
+        Timecop.freeze(now) do
+          metrics.mark_success
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 10) do
+          metrics.mark_success
+          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 40) do
+          metrics.mark_success
+          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 100) do
+          metrics.mark_success
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
 
@@ -53,22 +78,47 @@ module Resilient
 
         Timecop.freeze(now) do
           metrics.mark_failure
-          assert_equal 1, metrics.buckets.length
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 1) do
           metrics.mark_failure
-          assert_equal 2, metrics.buckets.length
+          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 4) do
           metrics.mark_failure
-          assert_equal 3, metrics.buckets.length
+          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 9) do
           metrics.mark_failure
-          assert_equal 1, metrics.buckets.length
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+        end
+      end
+
+      def test_mark_failure_prunes_with_greater_than_one_second_bucket_size
+        now = Time.now
+        metrics = RollingMetrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
+
+        Timecop.freeze(now) do
+          metrics.mark_failure
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 10) do
+          metrics.mark_failure
+          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 40) do
+          metrics.mark_failure
+          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
+        end
+
+        Timecop.freeze(now + 100) do
+          metrics.mark_failure
+          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
 

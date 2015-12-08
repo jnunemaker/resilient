@@ -15,14 +15,16 @@ module Resilient
 
       def mark_success
         timestamp = Time.now.to_i
-        bucket(timestamp).mark_success
+        bucket_start = timestamp / @bucket_size_in_seconds * @bucket_size_in_seconds
+        bucket(bucket_start).mark_success
         prune_buckets(timestamp)
         nil
       end
 
       def mark_failure
         timestamp = Time.now.to_i
-        bucket(timestamp).mark_failure
+        bucket_start = timestamp / @bucket_size_in_seconds * @bucket_size_in_seconds
+        bucket(bucket_start).mark_failure
         prune_buckets(timestamp)
         nil
       end
@@ -65,8 +67,13 @@ module Resilient
       end
 
       def prune_buckets(timestamp = Time.now.to_i)
-        cutoff = timestamp - (@number_of_buckets * @bucket_size_in_seconds)
-        @buckets.delete_if { |bucket| bucket.prune?(cutoff) }
+        bucket_start = timestamp / @bucket_size_in_seconds * @bucket_size_in_seconds
+        bucket_end = bucket_start + @bucket_size_in_seconds - 1
+        cutoff_bucket_end = bucket_end - (@number_of_buckets * @bucket_size_in_seconds)
+
+        @buckets.delete_if { |bucket|
+          cutoff_bucket_end >= bucket.timestamp_end
+        }
       end
     end
   end
