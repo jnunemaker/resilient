@@ -30,7 +30,11 @@ module Resilient
     end
 
     def mark_success
-      close_circuit if @open
+      if @open
+        close_circuit
+      else
+        @metrics.mark_success
+      end
     end
 
     def mark_failure

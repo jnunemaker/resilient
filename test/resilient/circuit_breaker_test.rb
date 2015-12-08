@@ -14,8 +14,8 @@ module Resilient
         error_threshold_percentage: 51,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       assert circuit_breaker.allow_request?
     end
@@ -25,8 +25,8 @@ module Resilient
         error_threshold_percentage: 49,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       refute circuit_breaker.allow_request?
     end
@@ -36,8 +36,8 @@ module Resilient
         error_threshold_percentage: 50,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       refute circuit_breaker.allow_request?
     end
@@ -59,8 +59,8 @@ module Resilient
         sleep_window_seconds: sleep_window_seconds,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       refute circuit_breaker.allow_request?
 
@@ -83,8 +83,8 @@ module Resilient
         force_open: true,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       refute circuit_breaker.allow_request?
     end
@@ -96,8 +96,8 @@ module Resilient
         force_closed: true,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
-      circuit_breaker.metrics.mark_success
-      circuit_breaker.metrics.mark_failure
+      circuit_breaker.mark_success
+      circuit_breaker.mark_failure
 
       assert circuit_breaker.allow_request?
     end
@@ -111,14 +111,16 @@ module Resilient
       metrics.verify
     end
 
-    def test_mark_success_when_not_open_does_not_reset_metrics
+    def test_mark_success_when_not_open_calls_mark_success_on_metrics
       metrics = Minitest::Mock.new
       circuit_breaker = CircuitBreaker.new(open: false, metrics: metrics)
+
+      metrics.expect :mark_success, nil
       circuit_breaker.mark_success
       metrics.verify
     end
 
-    def test_mark_failure
+    def test_mark_failure_calls_mark_failure_on_metrics
       metrics = Minitest::Mock.new
       circuit_breaker = CircuitBreaker.new(metrics: metrics)
 
