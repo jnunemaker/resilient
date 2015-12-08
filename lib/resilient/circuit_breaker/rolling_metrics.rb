@@ -44,7 +44,7 @@ module Resilient
 
       def error_percentage
         return 0 if failures == 0 || requests == 0
-        ((failures / requests.to_f) * 100).to_i
+        ((failures / requests.to_f) * 100).round
       end
 
       def reset

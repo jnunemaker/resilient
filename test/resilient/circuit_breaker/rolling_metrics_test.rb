@@ -135,9 +135,23 @@ module Resilient
         end
       end
 
-      def test_error_percentage
+      def test_error_percentage_returns_zero_if_zero_requests
         metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         assert_equal 0, metrics.error_percentage
+      end
+
+      def test_error_percentage_returns_zero_if_zero_failures
+        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics.mark_success
+        assert_equal 0, metrics.error_percentage
+      end
+
+      def test_error_percentage
+        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics.mark_success
+        metrics.mark_failure
+        metrics.mark_failure
+        assert_equal 67, metrics.error_percentage
       end
 
       def test_error_percentage_is_pruned
