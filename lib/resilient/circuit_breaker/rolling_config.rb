@@ -1,11 +1,11 @@
 module Resilient
   class CircuitBreaker
     class RollingConfig
-      attr_reader :error_threshold_percentage
-      attr_reader :sleep_window_seconds
-      attr_reader :request_volume_threshold
       attr_reader :force_open
       attr_reader :force_closed
+      attr_reader :sleep_window_seconds
+      attr_reader :request_volume_threshold
+      attr_reader :error_threshold_percentage
       attr_reader :number_of_buckets
       attr_reader :bucket_size_in_seconds
 
