@@ -32,8 +32,8 @@ if circuit_breaker.allow_request?
     # do something expensive
     circuit_breaker.mark_success
   rescue => boom
-    # do fallback
     circuit_breaker.mark_failure
+    # do fallback
   end
 else
   # do fallback
