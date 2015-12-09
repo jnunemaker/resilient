@@ -38,12 +38,14 @@ module Resilient
         else
           @metrics.mark_success
         end
+        nil
       }
     end
 
     def mark_failure
       instrument("resilient.circuit_breaker.mark_failure") { |payload|
         @metrics.mark_failure
+        nil
       }
     end
 
