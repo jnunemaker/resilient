@@ -23,17 +23,37 @@ module Resilient
     end
 
     def allow_request?
-      instrument("resilient.circuit_breaker.allow_request") { |payload|
-        return false if @config.force_open
-        return true if @config.force_closed
+      default_payload = {
+        force_open: false,
+        force_closed: false,
+      }
+      instrument("resilient.circuit_breaker.allow_request", default_payload) { |payload|
+        result = if payload[:force_open] = @config.force_open
+          false
+        else
+          if payload[:force_closed] = @config.force_closed
+            true
+          else
+            if !(payload[:open] = open?)
+              true
+            else
+              payload[:allow_single_request] = allow_single_request?
+            end
+          end
+        end
 
-        closed? || allow_single_request?
+        payload[:result] = result
+        result
       }
     end
 
     def mark_success
-      instrument("resilient.circuit_breaker.mark_success") { |payload|
+      default_payload = {
+        circuit_closed: false,
+      }
+      instrument("resilient.circuit_breaker.mark_success", default_payload) { |payload|
         if @open
+          payload[:circuit_closed] = true
           close_circuit
         else
           @metrics.mark_success
@@ -61,8 +81,8 @@ module Resilient
     private
 
     def open_circuit
-      @open = true
       @opened_or_last_checked_at_epoch = Time.now.to_i
+      @open = true
     end
 
     def close_circuit
@@ -85,6 +105,7 @@ module Resilient
       return false if under_error_threshold_percentage?
 
       open_circuit
+      true
     end
 
     def closed?
