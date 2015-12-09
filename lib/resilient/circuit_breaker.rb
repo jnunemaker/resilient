@@ -23,29 +23,37 @@ module Resilient
     end
 
     def allow_request?
-      return false if @config.force_open
-      return true if @config.force_closed
+      instrument("resilient.circuit_breaker.allow_request") { |payload|
+        return false if @config.force_open
+        return true if @config.force_closed
 
-      closed? || allow_single_request?
+        closed? || allow_single_request?
+      }
     end
 
     def mark_success
-      if @open
-        close_circuit
-      else
-        @metrics.mark_success
-      end
+      instrument("resilient.circuit_breaker.mark_success") { |payload|
+        if @open
+          close_circuit
+        else
+          @metrics.mark_success
+        end
+      }
     end
 
     def mark_failure
-      @metrics.mark_failure
+      instrument("resilient.circuit_breaker.mark_failure") { |payload|
+        @metrics.mark_failure
+      }
     end
 
     def reset
-      @open = false
-      @opened_or_last_checked_at_epoch = 0
-      @metrics.reset
-      nil
+      instrument("resilient.circuit_breaker.reset") { |payload|
+        @open = false
+        @opened_or_last_checked_at_epoch = 0
+        @metrics.reset
+        nil
+      }
     end
 
     private
@@ -90,6 +98,10 @@ module Resilient
       else
         false
       end
+    end
+
+    def instrument(name, payload = {}, &block)
+      config.instrumenter.instrument(name, payload, &block)
     end
   end
 end
