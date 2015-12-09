@@ -27,7 +27,7 @@ require "resilient/circuit_breaker"
 
 # default config for circuit
 circuit_breaker = Resilient::CircuitBreaker.new
-if circuit_breaker.request_allowed?
+if circuit_breaker.allow_request?
   begin
     # do something expensive
     circuit_breaker.mark_success
