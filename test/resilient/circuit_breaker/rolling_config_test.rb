@@ -1,5 +1,7 @@
 require "test_helper"
 require "resilient/circuit_breaker/rolling_config"
+require "resilient/instrumenters/noop"
+require "resilient/instrumenters/memory"
 
 module Resilient
   class CircuitBreaker
@@ -24,6 +26,15 @@ module Resilient
 
       def test_allows_overriding_force_closed
         assert_equal true, RollingConfig.new(force_closed: true).force_closed
+      end
+
+      def test_defaults_instrumenter
+        assert_equal Instrumenters::Noop, @object.instrumenter
+      end
+
+      def test_allows_overriding_instrumenter
+        instrumenter = Instrumenters::Memory.new
+        assert_equal instrumenter, RollingConfig.new(instrumenter: instrumenter).instrumenter
       end
 
       def test_defaults_sleep_window_seconds

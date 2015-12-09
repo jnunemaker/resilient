@@ -7,6 +7,10 @@ module RollingConfigInterfaceTest
     assert_respond_to @object, :force_closed
   end
 
+  def test_responds_to_instrumenter
+    assert_respond_to @object, :instrumenter
+  end
+
   def test_responds_to_sleep_window_seconds
     assert_respond_to @object, :sleep_window_seconds
   end
