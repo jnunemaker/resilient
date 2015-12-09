@@ -27,11 +27,19 @@ module Resilient
         force_open: false,
         force_closed: false,
       }
+
       instrument("resilient.circuit_breaker.allow_request", default_payload) { |payload|
         result = if payload[:force_open] = @config.force_open
           false
         else
           if payload[:force_closed] = @config.force_closed
+            # we still want to simulate normal behavior/metrics like open, allow
+            # single request, etc. so it is possible to test config in
+            # production without impact
+            if payload[:open] = open?
+              payload[:allow_single_request] = allow_single_request?
+            end
+
             true
           else
             if !(payload[:open] = open?)
@@ -43,17 +51,17 @@ module Resilient
         end
 
         payload[:result] = result
-        result
       }
     end
 
     def mark_success
       default_payload = {
-        circuit_closed: false,
+        closed_the_circuit: false,
       }
+
       instrument("resilient.circuit_breaker.mark_success", default_payload) { |payload|
         if @open
-          payload[:circuit_closed] = true
+          payload[:closed_the_circuit] = true
           close_circuit
         else
           @metrics.mark_success
