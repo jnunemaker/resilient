@@ -1,7 +1,7 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'resilient/version'
+require "resilient/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "resilient"
@@ -19,6 +19,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.8"
+  spec.add_development_dependency "timecop", "~> 0.8.0"
 end

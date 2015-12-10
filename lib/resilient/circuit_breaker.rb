@@ -3,21 +3,27 @@ require "resilient/circuit_breaker/properties"
 
 module Resilient
   class CircuitBreaker
-    attr_reader :metrics
-    attr_reader :properties
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
+    attr_reader :metrics
+    attr_reader :properties
 
-    def initialize(open: false, properties: Properties.new, metrics: Metrics.new)
+    def initialize(open: false, properties: nil, metrics: nil)
       @open = open
       @opened_or_last_checked_at_epoch = 0
-      @properties = properties
+
+      @properties = if properties
+        properties
+      else
+        Properties.new
+      end
+
       @metrics = if metrics
         metrics
       else
         Metrics.new({
-          number_of_buckets: properties.number_of_buckets,
-          bucket_size_in_seconds: properties.bucket_size_in_seconds,
+          number_of_buckets: @properties.number_of_buckets,
+          bucket_size_in_seconds: @properties.bucket_size_in_seconds,
         })
       end
     end

@@ -1,5 +1,7 @@
 require "test_helper"
 require "resilient/circuit_breaker"
+require "resilient/circuit_breaker/properties"
+require "resilient/circuit_breaker/metrics/storage/memory"
 
 module Resilient
   class CircuitBreakerInstrumentationTest < Resilient::Test

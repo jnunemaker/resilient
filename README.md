@@ -2,7 +2,7 @@
 
 Some tools for resilient in ruby. For now, just a circuit breaker (~~stolen from~~ based on [hystrix](https://github.com/netflix/hystrix)). Soon much more...
 
-Nothing asynchronous or thread safe yet either.
+Nothing asynchronous or thread safe yet either, but open to it and would like to see more around it in the future.
 
 ## Installation
 

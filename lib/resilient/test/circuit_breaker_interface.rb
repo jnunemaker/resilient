@@ -25,6 +25,5 @@ module Resilient
         assert_respond_to @object, :reset
       end
     end
-
   end
 end

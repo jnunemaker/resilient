@@ -1,4 +1,6 @@
 require "resilient/circuit_breaker/metrics/storage/memory"
+require "resilient/circuit_breaker/metrics/bucket_range"
+require "resilient/circuit_breaker/metrics/bucket_size"
 
 module Resilient
   class CircuitBreaker
@@ -17,64 +19,6 @@ module Resilient
       ].freeze
 
       StorageKeys = (StorageSuccessKeys + StorageFailureKeys).freeze
-
-      class Bucket
-        attr_reader :timestamp_start
-        attr_reader :timestamp_end
-
-        def initialize(timestamp_start, timestamp_end)
-          @timestamp_start = timestamp_start
-          @timestamp_end = timestamp_end
-        end
-
-        def prune_before(number_of_buckets, bucket_size)
-          @timestamp_end - (number_of_buckets * bucket_size.seconds)
-        end
-
-        def include?(timestamp)
-          timestamp >= @timestamp_start && timestamp <= @timestamp_end
-        end
-      end
-
-      class BucketRange
-        def self.generate(timestamp, number_of_buckets, bucket_size)
-          end_bucket = bucket_size.bucket(timestamp)
-          start_bucket = bucket_size.bucket(end_bucket.prune_before(number_of_buckets, bucket_size))
-          bucket_range = new(start_bucket, end_bucket)
-        end
-
-        attr_reader :start_bucket
-        attr_reader :end_bucket
-
-        def initialize(start_bucket, end_bucket)
-          @start_bucket = start_bucket
-          @end_bucket = end_bucket
-        end
-
-        def prune?(bucket)
-          bucket.timestamp_end <= @start_bucket.timestamp_end
-        end
-      end
-
-      class BucketSize
-        attr_reader :seconds
-
-        def initialize(seconds)
-          @seconds = seconds
-        end
-
-        def aligned_start(timestamp = Time.now.to_i)
-          timestamp / @seconds * @seconds
-        end
-
-        def aligned_end(timestamp = Time.now.to_i)
-          aligned_start(timestamp) + @seconds - 1
-        end
-
-        def bucket(timestamp = Time.now.to_i)
-          Bucket.new aligned_start(timestamp), aligned_end(timestamp)
-        end
-      end
 
       def initialize(options = {})
         @number_of_buckets = options.fetch(:number_of_buckets, 6)
