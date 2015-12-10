@@ -23,7 +23,7 @@ module Resilient
           indent,
           bucket.timestamp_start,
           bucket.timestamp_end,
-          bucket.size_in_seconds,
+          bucket.timestamp_end - bucket.timestamp_start + 1,
           result[bucket][:success].to_s.rjust(successes_pad),
           result[bucket][:failure].to_s.rjust(failures_pad),
           (result[bucket][:success] + result[bucket][:failure]).to_s.rjust(requests_pad),

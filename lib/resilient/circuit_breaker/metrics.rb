@@ -81,7 +81,10 @@ module Resilient
       private
 
       def bucket(timestamp)
-        bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }
+        bucket = @buckets.detect { |bucket|
+          timestamp >= bucket.timestamp_start && timestamp <= bucket.timestamp_end
+        }
+
         return bucket if bucket
 
         bucket = Bucket.new(timestamp, timestamp + @bucket_size_in_seconds - 1)
