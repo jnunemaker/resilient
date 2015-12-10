@@ -8,12 +8,12 @@ $:.unshift(lib_path)
 require "pp"
 require "resilient/circuit_breaker"
 
-config = Resilient::CircuitBreaker::Config.new({
+properties = Resilient::CircuitBreaker::Properties.new({
   sleep_window_seconds: 1,
   request_volume_threshold: 10,
   error_threshold_percentage: 25,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(config: config)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 
 # success
 if circuit_breaker.allow_request?
@@ -42,7 +42,7 @@ end
 
 # trip circuit, imagine this being same as above but in real life...
 # also, we have to fail at least the request volume threshold number of times
-circuit_breaker.config.request_volume_threshold.times do
+circuit_breaker.properties.request_volume_threshold.times do
   circuit_breaker.mark_failure
 end
 

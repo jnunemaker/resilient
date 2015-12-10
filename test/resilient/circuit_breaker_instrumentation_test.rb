@@ -5,10 +5,10 @@ module Resilient
   class CircuitBreakerInstrumentationTest < Resilient::Test
     def test_instruments_allow_request
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       assert circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
@@ -22,11 +22,11 @@ module Resilient
 
     def test_instruments_allow_request_force_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         force_open: true,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       refute circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
@@ -39,11 +39,11 @@ module Resilient
 
     def test_instruments_allow_request_force_closed
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         force_closed: true,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       assert circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
@@ -56,13 +56,13 @@ module Resilient
 
     def test_instruments_allow_request_force_closed_when_normal_behavior_would_be_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         force_closed: true,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_failure
       assert circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -79,19 +79,19 @@ module Resilient
 
     def test_instrument_allow_request_force_closed_when_normal_behavior_would_be_allow_single_request
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         force_closed: true,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_failure
       assert circuit_breaker.allow_request?
 
       # force code path through allow single request by moving past sleep threshold
-      Timecop.freeze(Time.now + config.sleep_window_seconds + 1) {
+      Timecop.freeze(Time.now + properties.sleep_window_seconds + 1) {
         assert circuit_breaker.allow_request?
       }
 
@@ -109,12 +109,12 @@ module Resilient
 
     def test_instruments_allow_request_open_true_allow_single_request_false
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_failure
       refute circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -131,18 +131,18 @@ module Resilient
 
     def test_instruments_allow_request_open_true_allow_single_request_true
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_failure
       refute circuit_breaker.allow_request?
 
       # force code path through allow single request by moving past sleep threshold
-      Timecop.freeze(Time.now + config.sleep_window_seconds + 1) {
+      Timecop.freeze(Time.now + properties.sleep_window_seconds + 1) {
         assert circuit_breaker.allow_request?
       }
 
@@ -160,10 +160,10 @@ module Resilient
 
     def test_instruments_mark_success_when_circuit_closed
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: false, config: config)
+      circuit_breaker = CircuitBreaker.new(open: false, properties: properties)
       circuit_breaker.mark_success
       event = instrumenter.events.first
       refute_nil event
@@ -173,10 +173,10 @@ module Resilient
 
     def test_instruments_mark_success_when_circuit_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: true, config: config)
+      circuit_breaker = CircuitBreaker.new(open: true, properties: properties)
       circuit_breaker.mark_success
       event = instrumenter.events.first
       refute_nil event
@@ -186,10 +186,10 @@ module Resilient
 
     def test_instruments_mark_failure
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_failure
       event = instrumenter.events.first
       refute_nil event
@@ -200,10 +200,10 @@ module Resilient
 
     def test_instruments_reset
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::Config.new({
+      properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.reset
       event = instrumenter.events.first
       refute_nil event

@@ -11,10 +11,10 @@ module Resilient
     include Test::CircuitBreakerInterface
 
     def test_allow_request_when_under_error_threshold_percentage
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 51,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -23,10 +23,10 @@ module Resilient
     end
 
     def test_allow_request_when_over_error_threshold_percentage
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 49,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -35,10 +35,10 @@ module Resilient
     end
 
     def test_allow_request_when_at_error_threshold_percentage
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 50,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -47,10 +47,10 @@ module Resilient
     end
 
     def test_allow_request_when_under_request_volume_threshold
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         request_volume_threshold: 5,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       4.times { circuit_breaker.metrics.mark_failure }
 
       assert circuit_breaker.allow_request?,
@@ -59,11 +59,11 @@ module Resilient
 
     def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
       now = Time.now
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 49,
         sleep_window_seconds: 5,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -75,33 +75,33 @@ module Resilient
         assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
       end
 
-      Timecop.freeze(now + config.sleep_window_seconds - 1) do
+      Timecop.freeze(now + properties.sleep_window_seconds - 1) do
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
         assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
       end
 
-      Timecop.freeze(now + config.sleep_window_seconds) do
+      Timecop.freeze(now + properties.sleep_window_seconds) do
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
         assert_equal now.to_i, circuit_breaker.opened_or_last_checked_at_epoch
       end
 
-      Timecop.freeze(now + config.sleep_window_seconds + 1) do
+      Timecop.freeze(now + properties.sleep_window_seconds + 1) do
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
 
-        assert_equal (now + config.sleep_window_seconds + 1).to_i,
+        assert_equal (now + properties.sleep_window_seconds + 1).to_i,
           circuit_breaker.opened_or_last_checked_at_epoch
       end
     end
 
     def test_allow_request_when_forced_open_but_under_threshold
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 51,
         force_open: true,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -110,12 +110,12 @@ module Resilient
     end
 
     def test_allow_request_when_forced_closed_but_over_threshold
-      config = CircuitBreaker::Config.new(default_test_config_options({
+      properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
         force_closed: true,
       }))
-      circuit_breaker = CircuitBreaker.new(config: config)
+      circuit_breaker = CircuitBreaker.new(properties: properties)
       circuit_breaker.mark_success
       circuit_breaker.mark_failure
 
@@ -175,9 +175,9 @@ module Resilient
 
     private
 
-    # Returns a Hash of default config options set in a way that all the short
-    # circuit config options are turned off.
-    def default_test_config_options(options = {})
+    # Returns a Hash of default properties options set in a way that all the short
+    # circuit properties options are turned off.
+    def default_test_properties_options(options = {})
       {
         request_volume_threshold: 0,
         force_closed: false,

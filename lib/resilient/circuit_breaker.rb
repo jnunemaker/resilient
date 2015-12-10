@@ -1,23 +1,23 @@
 require "resilient/circuit_breaker/metrics"
-require "resilient/circuit_breaker/config"
+require "resilient/circuit_breaker/properties"
 
 module Resilient
   class CircuitBreaker
     attr_reader :metrics
-    attr_reader :config
+    attr_reader :properties
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
 
-    def initialize(open: false, config: Config.new, metrics: Metrics.new)
+    def initialize(open: false, properties: Properties.new, metrics: Metrics.new)
       @open = open
       @opened_or_last_checked_at_epoch = 0
-      @config = config
+      @properties = properties
       @metrics = if metrics
         metrics
       else
         Metrics.new({
-          number_of_buckets: config.number_of_buckets,
-          bucket_size_in_seconds: config.bucket_size_in_seconds,
+          number_of_buckets: properties.number_of_buckets,
+          bucket_size_in_seconds: properties.bucket_size_in_seconds,
         })
       end
     end
@@ -29,12 +29,12 @@ module Resilient
       }
 
       instrument("resilient.circuit_breaker.allow_request", default_payload) { |payload|
-        result = if payload[:force_open] = @config.force_open
+        result = if payload[:force_open] = @properties.force_open
           false
         else
-          if payload[:force_closed] = @config.force_closed
+          if payload[:force_closed] = @properties.force_closed
             # we still want to simulate normal behavior/metrics like open, allow
-            # single request, etc. so it is possible to test config in
+            # single request, etc. so it is possible to test properties in
             # production without impact
             if payload[:open] = open?
               payload[:allow_single_request] = allow_single_request?
@@ -100,11 +100,11 @@ module Resilient
     end
 
     def under_request_volume_threshold?
-      @metrics.requests < @config.request_volume_threshold
+      @metrics.requests < @properties.request_volume_threshold
     end
 
     def under_error_threshold_percentage?
-      @metrics.error_percentage < @config.error_threshold_percentage
+      @metrics.error_percentage < @properties.error_threshold_percentage
     end
 
     def open?
@@ -123,7 +123,7 @@ module Resilient
     def allow_single_request?
       now = Time.now.to_i
 
-      if @open && now > (@opened_or_last_checked_at_epoch + @config.sleep_window_seconds)
+      if @open && now > (@opened_or_last_checked_at_epoch + @properties.sleep_window_seconds)
         @opened_or_last_checked_at_epoch = now
         true
       else
@@ -132,7 +132,7 @@ module Resilient
     end
 
     def instrument(name, payload = {}, &block)
-      config.instrumenter.instrument(name, payload, &block)
+      properties.instrumenter.instrument(name, payload, &block)
     end
   end
 end

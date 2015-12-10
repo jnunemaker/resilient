@@ -8,14 +8,14 @@ $:.unshift(lib_path)
 require "pp"
 require "resilient/circuit_breaker"
 
-config = Resilient::CircuitBreaker::Config.new({
+properties = Resilient::CircuitBreaker::Properties.new({
   sleep_window_seconds: 5,
   request_volume_threshold: 20,
   error_threshold_percentage: 10,
   number_of_buckets: 10,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(config: config)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 
 iterations = 0
 loop do

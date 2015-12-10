@@ -25,7 +25,7 @@ Or install it yourself as:
 ```ruby
 require "resilient/circuit_breaker"
 
-# default config for circuit
+# default properties for circuit
 circuit_breaker = Resilient::CircuitBreaker.new
 if circuit_breaker.allow_request?
   begin
@@ -40,10 +40,10 @@ else
 end
 ```
 
-customize config of circuit:
+customize properties of circuit:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new({
+properties = Resilient::CircuitBreaker::Properties.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
@@ -51,23 +51,23 @@ config = Resilient::CircuitBreaker::Config.new({
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(config: config)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 # etc etc etc
 ```
 
 force the circuit to be always open:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new(force_open: true)
-circuit_breaker = Resilient::CircuitBreaker.new(config: config)
+properties = Resilient::CircuitBreaker::Properties.new(force_open: true)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 # etc etc etc
 ```
 
 force the circuit to be always closed:
 
 ```ruby
-config = Resilient::CircuitBreaker::Config.new(force_closed: true)
-circuit_breaker = Resilient::CircuitBreaker.new(config: config)
+properties = Resilient::CircuitBreaker::Properties.new(force_closed: true)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 # etc etc etc
 ```
 

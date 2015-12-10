@@ -1,6 +1,6 @@
 module Resilient
   class Test
-    module ConfigInterface
+    module PropertiesInterface
       def test_responds_to_force_open
         assert_respond_to @object, :force_open
       end

@@ -28,12 +28,12 @@ module Resilient
       }.join("\n")
     end
 
-    def debug_config(config, indent: "")
-      config.instance_variables.map { |ivar|
+    def debug_properties(properties, indent: "")
+      properties.instance_variables.map { |ivar|
         "%s%s: %s" % [
           indent,
           ivar.to_s.sub("@", ""),
-          config.instance_variable_get(ivar),
+          properties.instance_variable_get(ivar),
         ]
       }.join("\n")
     end
@@ -47,8 +47,8 @@ requests: #{circuit_breaker.metrics.successes} + #{circuit_breaker.metrics.failu
 error_percentage: #{circuit_breaker.metrics.error_percentage}%
 buckets:
 #{debug_metrics(circuit_breaker.metrics, indent: "  ")}
-config:
-#{debug_config(circuit_breaker.config, indent: "  ")}
+properties:
+#{debug_properties(circuit_breaker.properties, indent: "  ")}
 EOS
     end
   end
