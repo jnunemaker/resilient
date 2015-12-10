@@ -1,6 +1,10 @@
 module Resilient
   class Test
     module CircuitBreakerInterface
+      def test_responds_to_key
+        assert_respond_to @object, :key
+      end
+
       def test_responds_to_allow_request
         assert_respond_to @object, :allow_request?
       end

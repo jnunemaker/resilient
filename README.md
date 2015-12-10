@@ -26,7 +26,7 @@ Or install it yourself as:
 require "resilient/circuit_breaker"
 
 # default properties for circuit
-circuit_breaker = Resilient::CircuitBreaker.new
+circuit_breaker = Resilient::CircuitBreaker.new(key: Resilient::Key.new("example"))
 if circuit_breaker.allow_request?
   begin
     # do something expensive
@@ -51,7 +51,7 @@ properties = Resilient::CircuitBreaker::Properties.new({
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 
@@ -59,7 +59,7 @@ force the circuit to be always open:
 
 ```ruby
 properties = Resilient::CircuitBreaker::Properties.new(force_open: true)
-circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 
@@ -67,7 +67,7 @@ force the circuit to be always closed:
 
 ```ruby
 properties = Resilient::CircuitBreaker::Properties.new(force_closed: true)
-circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
+circuit_breaker = Resilient::CircuitBreaker.new(properties: properties, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 
@@ -78,7 +78,7 @@ metrics = Resilient::CircuitBreaker::Metrics.new({
   window_size_in_seconds: 10,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(metrics: metrics)
+circuit_breaker = Resilient::CircuitBreaker.new(metrics: metrics, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 

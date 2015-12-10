@@ -1,14 +1,17 @@
+require "resilient/key"
 require "resilient/circuit_breaker/metrics"
 require "resilient/circuit_breaker/properties"
 
 module Resilient
   class CircuitBreaker
+    attr_reader :key
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
     attr_reader :metrics
     attr_reader :properties
 
-    def initialize(open: false, properties: nil, metrics: nil)
+    def initialize(key:, open: false, properties: nil, metrics: nil)
+      @key = key
       @open = open
       @opened_or_last_checked_at_epoch = 0
 
@@ -30,6 +33,7 @@ module Resilient
 
     def allow_request?
       default_payload = {
+        key: @key,
         force_open: false,
         force_closed: false,
       }
@@ -62,6 +66,7 @@ module Resilient
 
     def success
       default_payload = {
+        key: @key,
         closed_the_circuit: false,
       }
 
@@ -77,14 +82,22 @@ module Resilient
     end
 
     def failure
-      instrument("resilient.circuit_breaker.failure") { |payload|
+      default_payload = {
+        key: @key,
+      }
+
+      instrument("resilient.circuit_breaker.failure", default_payload) { |payload|
         @metrics.failure
         nil
       }
     end
 
     def reset
-      instrument("resilient.circuit_breaker.reset") { |payload|
+      default_payload = {
+        key: @key,
+      }
+
+      instrument("resilient.circuit_breaker.reset", default_payload) { |payload|
         @open = false
         @opened_or_last_checked_at_epoch = 0
         @metrics.reset

@@ -15,7 +15,7 @@ properties = Resilient::CircuitBreaker::Properties.new({
   window_size_in_seconds: 60,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
+circuit_breaker = Resilient::CircuitBreaker.new(key: Resilient::Key.new("example"), properties: properties)
 
 iterations = 0
 loop do

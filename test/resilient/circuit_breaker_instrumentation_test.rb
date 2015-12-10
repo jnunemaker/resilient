@@ -10,11 +10,12 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       assert circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:force_open]
       assert_equal false, event.payload[:force_closed]
       assert_equal true, event.payload[:result]
@@ -28,11 +29,12 @@ module Resilient
         instrumenter: instrumenter,
         force_open: true,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       refute circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event.payload[:force_open]
       assert_equal false, event.payload[:result]
       assert_equal nil, event.payload[:open]
@@ -45,11 +47,12 @@ module Resilient
         instrumenter: instrumenter,
         force_closed: true,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       assert circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event.payload[:force_closed]
       assert_equal true, event.payload[:result]
       assert_equal false, event.payload[:open]
@@ -64,7 +67,7 @@ module Resilient
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       assert circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -72,6 +75,7 @@ module Resilient
       }
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:force_open]
       assert_equal true, event.payload[:force_closed]
       assert_equal true, event.payload[:result]
@@ -88,7 +92,7 @@ module Resilient
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       assert circuit_breaker.allow_request?
 
@@ -102,6 +106,7 @@ module Resilient
       }
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:force_open]
       assert_equal true, event.payload[:force_closed]
       assert_equal true, event.payload[:result]
@@ -116,7 +121,7 @@ module Resilient
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       refute circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -124,6 +129,7 @@ module Resilient
       }
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:force_open]
       assert_equal false, event.payload[:force_closed]
       assert_equal false, event.payload[:result]
@@ -139,7 +145,7 @@ module Resilient
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       refute circuit_breaker.allow_request?
 
@@ -153,6 +159,7 @@ module Resilient
       }
       refute_nil event
       assert_equal "resilient.circuit_breaker.allow_request", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:force_open]
       assert_equal false, event.payload[:force_closed]
       assert_equal true, event.payload[:result]
@@ -165,11 +172,12 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: false, properties: properties)
+      circuit_breaker = CircuitBreaker.new(open: false, properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.success", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event.payload[:closed_the_circuit]
     end
 
@@ -178,11 +186,12 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: true, properties: properties)
+      circuit_breaker = CircuitBreaker.new(open: true, properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.success", event.name
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event.payload[:closed_the_circuit]
     end
 
@@ -191,13 +200,12 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.failure", event.name
-      expected_payload = {}
-      assert_equal expected_payload, event.payload
+      assert_equal "test", event.payload.fetch(:key).name
     end
 
     def test_instruments_reset
@@ -205,13 +213,12 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties)
+      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.reset
       event = instrumenter.events.first
       refute_nil event
       assert_equal "resilient.circuit_breaker.reset", event.name
-      expected_payload = {}
-      assert_equal expected_payload, event.payload
+      assert_equal "test", event.payload.fetch(:key).name
     end
   end
 end
