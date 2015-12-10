@@ -36,6 +36,26 @@ module Resilient
         end
       end
 
+      class BucketRange
+        def self.generate(timestamp, number_of_buckets, bucket_size)
+          end_bucket = bucket_size.bucket(timestamp)
+          start_bucket = bucket_size.bucket(end_bucket.prune_before(number_of_buckets, bucket_size))
+          bucket_range = new(start_bucket, end_bucket)
+        end
+
+        attr_reader :start_bucket
+        attr_reader :end_bucket
+
+        def initialize(start_bucket, end_bucket)
+          @start_bucket = start_bucket
+          @end_bucket = end_bucket
+        end
+
+        def prune?(bucket)
+          bucket.timestamp_end <= @start_bucket.timestamp_end
+        end
+      end
+
       class BucketSize
         attr_reader :seconds
 
@@ -141,11 +161,10 @@ module Resilient
 
       def prune_buckets(timestamp = Time.now.to_i)
         pruned_buckets = []
-        bucket = @bucket_size.bucket(timestamp)
-        prune_buckets_ending_before = bucket.prune_before(@number_of_buckets, @bucket_size)
+        bucket_range = BucketRange.generate(timestamp, @number_of_buckets, @bucket_size)
 
         @buckets.delete_if { |bucket|
-          if bucket.timestamp_end <= prune_buckets_ending_before
+          if bucket_range.prune?(bucket)
             pruned_buckets << bucket
             true
           end
