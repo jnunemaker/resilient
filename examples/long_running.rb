@@ -24,10 +24,10 @@ loop do
       puts "request allowed"
       raise if rand(100) < 10
       puts "request succeeded"
-      circuit_breaker.mark_success
+      circuit_breaker.success
     rescue => boom
       puts "request failed"
-      circuit_breaker.mark_failure
+      circuit_breaker.failure
     end
   else
     puts "request denied"

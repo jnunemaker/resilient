@@ -11,114 +11,114 @@ module Resilient
 
       include Test::MetricsInterface
 
-      def test_mark_success
+      def test_success
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
-        metrics.mark_success
+        metrics.success
         assert_equal 1, metrics.successes
       end
 
-      def test_mark_success_prunes
+      def test_success_prunes
         now = Time.now
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.mark_success
+          metrics.success
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 1) do
-          metrics.mark_success
+          metrics.success
           assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 4) do
-          metrics.mark_success
+          metrics.success
           assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 10) do
-          metrics.mark_success
+          metrics.success
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
 
-      def test_mark_success_prunes_with_greater_than_one_second_bucket_size
+      def test_success_prunes_with_greater_than_one_second_bucket_size
         now = Time.now
         metrics = Metrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
 
         Timecop.freeze(now) do
-          metrics.mark_success
+          metrics.success
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 10) do
-          metrics.mark_success
+          metrics.success
           assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 40) do
-          metrics.mark_success
+          metrics.success
           assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 100) do
-          metrics.mark_success
+          metrics.success
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
 
-      def test_mark_failure
+      def test_failure
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
-        metrics.mark_failure
+        metrics.failure
         assert_equal 1, metrics.failures
       end
 
-      def test_mark_failure_prunes
+      def test_failure_prunes
         now = Time.now
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 1) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 4) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 9) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
 
-      def test_mark_failure_prunes_with_greater_than_one_second_bucket_size
+      def test_failure_prunes_with_greater_than_one_second_bucket_size
         now = Time.now
         metrics = Metrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
 
         Timecop.freeze(now) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 10) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 40) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
         end
 
         Timecop.freeze(now + 100) do
-          metrics.mark_failure
+          metrics.failure
           assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
         end
       end
@@ -133,9 +133,9 @@ module Resilient
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.mark_success
-          metrics.mark_success
-          metrics.mark_success
+          metrics.success
+          metrics.success
+          metrics.success
           assert_equal 3, metrics.successes
         end
 
@@ -154,9 +154,9 @@ module Resilient
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.mark_failure
-          metrics.mark_failure
-          metrics.mark_failure
+          metrics.failure
+          metrics.failure
+          metrics.failure
           assert_equal 3, metrics.failures
         end
 
@@ -175,9 +175,9 @@ module Resilient
         now = Time.now
 
         Timecop.freeze(now) do
-          metrics.mark_success
-          metrics.mark_success
-          metrics.mark_failure
+          metrics.success
+          metrics.success
+          metrics.failure
           assert_equal 3, metrics.requests
         end
 
@@ -193,15 +193,15 @@ module Resilient
 
       def test_error_percentage_returns_zero_if_zero_failures
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
-        metrics.mark_success
+        metrics.success
         assert_equal 0, metrics.error_percentage
       end
 
       def test_error_percentage
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
-        metrics.mark_success
-        metrics.mark_failure
-        metrics.mark_failure
+        metrics.success
+        metrics.failure
+        metrics.failure
         assert_equal 67, metrics.error_percentage
       end
 
@@ -210,8 +210,8 @@ module Resilient
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.mark_success
-          metrics.mark_failure
+          metrics.success
+          metrics.failure
           assert_equal 50, metrics.error_percentage
         end
 

@@ -27,13 +27,13 @@ module Resilient
         @buckets = []
       end
 
-      def mark_success
+      def success
         @storage.increment(current_bucket, StorageSuccessKeys)
         prune_buckets
         nil
       end
 
-      def mark_failure
+      def failure
         @storage.increment(current_bucket, StorageFailureKeys)
         prune_buckets
         nil

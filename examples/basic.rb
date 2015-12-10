@@ -19,10 +19,10 @@ circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)
 if circuit_breaker.allow_request?
   begin
     puts "do expensive thing"
-    circuit_breaker.mark_success
+    circuit_breaker.success
   rescue => boom
     # won't get here in this example
-    circuit_breaker.mark_failure
+    circuit_breaker.failure
   end
 else
   raise "will not get here"
@@ -33,7 +33,7 @@ if circuit_breaker.allow_request?
   begin
     raise
   rescue => boom
-    circuit_breaker.mark_failure
+    circuit_breaker.failure
     puts "failed slow, do fallback"
   end
 else
@@ -43,7 +43,7 @@ end
 # trip circuit, imagine this being same as above but in real life...
 # also, we have to fail at least the request volume threshold number of times
 circuit_breaker.properties.request_volume_threshold.times do
-  circuit_breaker.mark_failure
+  circuit_breaker.failure
 end
 
 # fail fast
@@ -72,7 +72,7 @@ else
 end
 
 puts "marking single request as success"
-circuit_breaker.mark_success
+circuit_breaker.success
 
 if circuit_breaker.allow_request?
   puts "circuit reset and back closed now, allowing requests"

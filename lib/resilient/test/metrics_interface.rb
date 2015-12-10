@@ -1,20 +1,20 @@
 module Resilient
   class Test
     module MetricsInterface
-      def test_responds_to_mark_success
-        assert_respond_to @object, :mark_success
+      def test_responds_to_success
+        assert_respond_to @object, :success
       end
 
-      def test_mark_success_returns_nothing
-        assert_nil @object.mark_success
+      def test_success_returns_nothing
+        assert_nil @object.success
       end
 
-      def test_responds_to_mark_failure
-        assert_respond_to @object, :mark_failure
+      def test_responds_to_failure
+        assert_respond_to @object, :failure
       end
 
-      def test_mark_failure_returns_nothing
-        assert_nil @object.mark_failure
+      def test_failure_returns_nothing
+        assert_nil @object.failure
       end
 
       def test_responds_to_successes

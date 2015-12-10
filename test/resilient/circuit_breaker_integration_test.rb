@@ -11,19 +11,19 @@ module Resilient
         bucket_size_in_seconds: 10,
       })
       circuit_breaker = CircuitBreaker.new(properties: properties)
-      70.times { circuit_breaker.mark_success }
+      70.times { circuit_breaker.success }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      20.times { circuit_breaker.mark_failure }
+      20.times { circuit_breaker.failure }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      5.times { circuit_breaker.mark_success }
+      5.times { circuit_breaker.success }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      5.times { circuit_breaker.mark_failure }
+      5.times { circuit_breaker.failure }
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
     end
@@ -36,11 +36,11 @@ module Resilient
         bucket_size_in_seconds: 10,
       })
       circuit_breaker = CircuitBreaker.new(properties: properties)
-      18.times { circuit_breaker.mark_failure }
+      18.times { circuit_breaker.failure }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      2.times { circuit_breaker.mark_failure }
+      2.times { circuit_breaker.failure }
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
     end
@@ -55,7 +55,7 @@ module Resilient
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      20.times { circuit_breaker.mark_success }
+      20.times { circuit_breaker.success }
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
     end
@@ -70,7 +70,7 @@ module Resilient
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
-      20.times { circuit_breaker.mark_failure }
+      20.times { circuit_breaker.failure }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
     end
@@ -103,43 +103,43 @@ module Resilient
       bucket6 = now + 50
 
       Timecop.freeze(bucket1) do
-        12.times { circuit_breaker.mark_success }
-        2.times { circuit_breaker.mark_failure }
+        12.times { circuit_breaker.success }
+        2.times { circuit_breaker.failure }
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(bucket2) do
-        13.times { circuit_breaker.mark_success }
-        3.times { circuit_breaker.mark_failure }
+        13.times { circuit_breaker.success }
+        3.times { circuit_breaker.failure }
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(bucket3) do
-        22.times { circuit_breaker.mark_success }
-        10.times { circuit_breaker.mark_failure }
+        22.times { circuit_breaker.success }
+        10.times { circuit_breaker.failure }
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(bucket4) do
-        14.times { circuit_breaker.mark_success }
-        3.times { circuit_breaker.mark_failure }
+        14.times { circuit_breaker.success }
+        3.times { circuit_breaker.failure }
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(bucket5) do
-        9.times { circuit_breaker.mark_success }
-        4.times { circuit_breaker.mark_failure }
+        9.times { circuit_breaker.success }
+        4.times { circuit_breaker.failure }
         assert circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
 
       Timecop.freeze(bucket6) do
-        33.times { circuit_breaker.mark_success }
-        12.times { circuit_breaker.mark_failure }
+        33.times { circuit_breaker.success }
+        12.times { circuit_breaker.failure }
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
@@ -154,7 +154,7 @@ module Resilient
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
 
-        circuit_breaker.mark_success
+        circuit_breaker.success
 
         # success happened so we allow requests once again
         assert circuit_breaker.allow_request?,

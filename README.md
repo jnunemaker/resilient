@@ -30,9 +30,9 @@ circuit_breaker = Resilient::CircuitBreaker.new
 if circuit_breaker.allow_request?
   begin
     # do something expensive
-    circuit_breaker.mark_success
+    circuit_breaker.success
   rescue => boom
-    circuit_breaker.mark_failure
+    circuit_breaker.failure
     # do fallback
   end
 else

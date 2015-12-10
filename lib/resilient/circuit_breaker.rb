@@ -60,25 +60,25 @@ module Resilient
       }
     end
 
-    def mark_success
+    def success
       default_payload = {
         closed_the_circuit: false,
       }
 
-      instrument("resilient.circuit_breaker.mark_success", default_payload) { |payload|
+      instrument("resilient.circuit_breaker.success", default_payload) { |payload|
         if @open
           payload[:closed_the_circuit] = true
           close_circuit
         else
-          @metrics.mark_success
+          @metrics.success
         end
         nil
       }
     end
 
-    def mark_failure
-      instrument("resilient.circuit_breaker.mark_failure") { |payload|
-        @metrics.mark_failure
+    def failure
+      instrument("resilient.circuit_breaker.failure") { |payload|
+        @metrics.failure
         nil
       }
     end
