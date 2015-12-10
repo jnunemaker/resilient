@@ -1,9 +1,9 @@
 require "test_helper"
-require "resilient/circuit_breaker/rolling_config"
+require "resilient/circuit_breaker/config"
 
 module Resilient
   class CircuitBreaker
-    class RollingMetrics
+    class Metrics
       class BucketTest < Resilient::Test
         def test_initialize
           bucket = Bucket.new(0, 1)

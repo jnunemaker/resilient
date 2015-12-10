@@ -5,7 +5,7 @@ module Resilient
   class CircuitBreakerInstrumentationTest < Resilient::Test
     def test_instruments_allow_request
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
       })
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -22,7 +22,7 @@ module Resilient
 
     def test_instruments_allow_request_force_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         force_open: true,
       })
@@ -39,7 +39,7 @@ module Resilient
 
     def test_instruments_allow_request_force_closed
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         force_closed: true,
       })
@@ -56,7 +56,7 @@ module Resilient
 
     def test_instruments_allow_request_force_closed_when_normal_behavior_would_be_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         force_closed: true,
         error_threshold_percentage: 50,
@@ -79,7 +79,7 @@ module Resilient
 
     def test_instrument_allow_request_force_closed_when_normal_behavior_would_be_allow_single_request
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         force_closed: true,
         error_threshold_percentage: 50,
@@ -109,7 +109,7 @@ module Resilient
 
     def test_instruments_allow_request_open_true_allow_single_request_false
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
@@ -131,7 +131,7 @@ module Resilient
 
     def test_instruments_allow_request_open_true_allow_single_request_true
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
@@ -160,7 +160,7 @@ module Resilient
 
     def test_instruments_mark_success_when_circuit_closed
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
       })
       circuit_breaker = CircuitBreaker.new(open: false, config: config)
@@ -173,7 +173,7 @@ module Resilient
 
     def test_instruments_mark_success_when_circuit_open
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
       })
       circuit_breaker = CircuitBreaker.new(open: true, config: config)
@@ -186,7 +186,7 @@ module Resilient
 
     def test_instruments_mark_failure
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
       })
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -200,7 +200,7 @@ module Resilient
 
     def test_instruments_reset
       instrumenter = Instrumenters::Memory.new
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         instrumenter: instrumenter,
       })
       circuit_breaker = CircuitBreaker.new(config: config)

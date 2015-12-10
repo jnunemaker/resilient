@@ -43,7 +43,7 @@ end
 customize config of circuit:
 
 ```ruby
-config = Resilient::CircuitBreaker::RollingConfig.new({
+config = Resilient::CircuitBreaker::Config.new({
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
@@ -58,7 +58,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 force the circuit to be always open:
 
 ```ruby
-config = Resilient::CircuitBreaker::RollingConfig.new(force_open: true)
+config = Resilient::CircuitBreaker::Config.new(force_open: true)
 circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
@@ -66,7 +66,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 force the circuit to be always closed:
 
 ```ruby
-config = Resilient::CircuitBreaker::RollingConfig.new(force_closed: true)
+config = Resilient::CircuitBreaker::Config.new(force_closed: true)
 circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 # etc etc etc
 ```
@@ -74,7 +74,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(config: config)
 customize rolling window to be 10 buckets of 1 second each (10 seconds in all):
 
 ```ruby
-metrics = Resilient::CircuitBreaker::RollingMetrics.new({
+metrics = Resilient::CircuitBreaker::Metrics.new({
   number_of_buckets: 10,
   bucket_size_in_seconds: 1,
 })

@@ -1,5 +1,5 @@
-require "resilient/circuit_breaker/rolling_metrics"
-require "resilient/circuit_breaker/rolling_config"
+require "resilient/circuit_breaker/metrics"
+require "resilient/circuit_breaker/config"
 
 module Resilient
   class CircuitBreaker
@@ -8,14 +8,14 @@ module Resilient
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
 
-    def initialize(open: false, config: RollingConfig.new, metrics: RollingMetrics.new)
+    def initialize(open: false, config: Config.new, metrics: Metrics.new)
       @open = open
       @opened_or_last_checked_at_epoch = 0
       @config = config
       @metrics = if metrics
         metrics
       else
-        RollingMetrics.new({
+        Metrics.new({
           number_of_buckets: config.number_of_buckets,
           bucket_size_in_seconds: config.bucket_size_in_seconds,
         })

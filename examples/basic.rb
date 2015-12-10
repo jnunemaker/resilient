@@ -8,7 +8,7 @@ $:.unshift(lib_path)
 require "pp"
 require "resilient/circuit_breaker"
 
-config = Resilient::CircuitBreaker::RollingConfig.new({
+config = Resilient::CircuitBreaker::Config.new({
   sleep_window_seconds: 1,
   request_volume_threshold: 10,
   error_threshold_percentage: 25,

@@ -1,4 +1,4 @@
-module RollingConfigInterfaceTest
+module ConfigInterfaceTest
   def test_responds_to_force_open
     assert_respond_to @object, :force_open
   end

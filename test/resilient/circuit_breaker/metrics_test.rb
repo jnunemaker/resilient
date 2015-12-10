@@ -1,24 +1,24 @@
 require "test_helper"
-require "resilient/circuit_breaker/rolling_metrics"
+require "resilient/circuit_breaker/metrics"
 
 module Resilient
   class CircuitBreaker
-    class RollingMetricsTest < Resilient::Test
+    class MetricsTest < Resilient::Test
       def setup
-        @object = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        @object = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
       end
 
-      include RollingMetricsInterfaceTest
+      include MetricsInterfaceTest
 
       def test_mark_success
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.mark_success
         assert_equal 1, metrics.successes
       end
 
       def test_mark_success_prunes
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
           metrics.mark_success
@@ -43,7 +43,7 @@ module Resilient
 
       def test_mark_success_prunes_with_greater_than_one_second_bucket_size
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
+        metrics = Metrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
 
         Timecop.freeze(now) do
           metrics.mark_success
@@ -67,14 +67,14 @@ module Resilient
       end
 
       def test_mark_failure
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.mark_failure
         assert_equal 1, metrics.failures
       end
 
       def test_mark_failure_prunes
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
           metrics.mark_failure
@@ -99,7 +99,7 @@ module Resilient
 
       def test_mark_failure_prunes_with_greater_than_one_second_bucket_size
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
+        metrics = Metrics.new(number_of_buckets: 6, bucket_size_in_seconds: 10)
 
         Timecop.freeze(now) do
           metrics.mark_failure
@@ -123,13 +123,13 @@ module Resilient
       end
 
       def test_successes
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         assert_equal 0, metrics.successes
       end
 
       def test_successes_is_pruned
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
           metrics.mark_success
@@ -144,13 +144,13 @@ module Resilient
       end
 
       def test_failures
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         assert_equal 0, metrics.failures
       end
 
       def test_failures_is_pruned
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
           metrics.mark_failure
@@ -165,12 +165,12 @@ module Resilient
       end
 
       def test_requests
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         assert_equal 0, metrics.requests
       end
 
       def test_requests_is_pruned
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         now = Time.now
 
         Timecop.freeze(now) do
@@ -186,18 +186,18 @@ module Resilient
       end
 
       def test_error_percentage_returns_zero_if_zero_requests
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         assert_equal 0, metrics.error_percentage
       end
 
       def test_error_percentage_returns_zero_if_zero_failures
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.mark_success
         assert_equal 0, metrics.error_percentage
       end
 
       def test_error_percentage
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.mark_success
         metrics.mark_failure
         metrics.mark_failure
@@ -206,7 +206,7 @@ module Resilient
 
       def test_error_percentage_is_pruned
         now = Time.now
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
           metrics.mark_success
@@ -220,7 +220,7 @@ module Resilient
       end
 
       def test_reset
-        metrics = RollingMetrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
+        metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
         metrics.reset
         assert_equal 0, metrics.successes
         assert_equal 0, metrics.failures

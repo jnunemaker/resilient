@@ -2,7 +2,7 @@ require "resilient/instrumenters/noop"
 
 module Resilient
   class CircuitBreaker
-    class RollingConfig
+    class Config
       attr_reader :force_open
       attr_reader :force_closed
       attr_reader :instrumenter

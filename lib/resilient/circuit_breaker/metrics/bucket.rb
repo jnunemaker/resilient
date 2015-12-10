@@ -1,6 +1,6 @@
 module Resilient
   class CircuitBreaker
-    class RollingMetrics
+    class Metrics
       class Bucket
         attr_reader :timestamp_start
         attr_reader :timestamp_end

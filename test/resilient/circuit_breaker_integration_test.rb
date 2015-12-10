@@ -4,7 +4,7 @@ require "resilient/circuit_breaker"
 module Resilient
   class CircuitBreakerIntegrationTest < Resilient::Test
     def test_enough_failures_in_time_window_open_circuit
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
         number_of_buckets: 6,
@@ -29,7 +29,7 @@ module Resilient
     end
 
     def test_enough_failures_in_time_window_but_under_request_threshold_does_not_open_circuit
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 20,
         number_of_buckets: 6,
@@ -46,7 +46,7 @@ module Resilient
     end
 
     def test_forced_open_does_not_allow_request_even_if_all_successes
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
         force_open: true,
@@ -61,7 +61,7 @@ module Resilient
     end
 
     def test_forced_close_allows_requests_even_if_all_failures
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
         force_closed: true,
@@ -76,7 +76,7 @@ module Resilient
     end
 
     def test_force_open_takes_precedence_over_force_closed
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         request_volume_threshold: 0,
         force_closed: true,
         force_open: true,
@@ -87,7 +87,7 @@ module Resilient
     end
 
     def test_allow_request_denies_for_sleep_seconds_then_allows_single_request_which_if_successful_closes_circuit
-      config = CircuitBreaker::RollingConfig.new({
+      config = CircuitBreaker::Config.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
         number_of_buckets: 6,

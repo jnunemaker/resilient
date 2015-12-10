@@ -1,8 +1,8 @@
-require "resilient/circuit_breaker/rolling_metrics/bucket"
+require "resilient/circuit_breaker/metrics/bucket"
 
 module Resilient
   class CircuitBreaker
-    class RollingMetrics
+    class Metrics
       attr_reader :number_of_buckets
       attr_reader :bucket_size_in_seconds
       attr_reader :buckets

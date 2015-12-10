@@ -10,7 +10,7 @@ module Resilient
     include CircuitBreakerInterfaceTest
 
     def test_allow_request_when_under_error_threshold_percentage
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 51,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -22,7 +22,7 @@ module Resilient
     end
 
     def test_allow_request_when_over_error_threshold_percentage
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 49,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -34,7 +34,7 @@ module Resilient
     end
 
     def test_allow_request_when_at_error_threshold_percentage
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 50,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -46,7 +46,7 @@ module Resilient
     end
 
     def test_allow_request_when_under_request_volume_threshold
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         request_volume_threshold: 5,
       }))
       circuit_breaker = CircuitBreaker.new(config: config)
@@ -58,7 +58,7 @@ module Resilient
 
     def test_allow_request_with_circuit_open_but_after_sleep_window_seconds
       now = Time.now
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 49,
         sleep_window_seconds: 5,
       }))
@@ -96,7 +96,7 @@ module Resilient
     end
 
     def test_allow_request_when_forced_open_but_under_threshold
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 51,
         force_open: true,
       }))
@@ -109,7 +109,7 @@ module Resilient
     end
 
     def test_allow_request_when_forced_closed_but_over_threshold
-      config = CircuitBreaker::RollingConfig.new(default_test_config_options({
+      config = CircuitBreaker::Config.new(default_test_config_options({
         error_threshold_percentage: 49,
         request_volume_threshold: 0,
         force_closed: true,
