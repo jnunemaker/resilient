@@ -78,27 +78,20 @@ module Resilient
 
       def initialize(options = {})
         @number_of_buckets = options.fetch(:number_of_buckets, 6)
-        @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
-        @bucket_size = BucketSize.new(@bucket_size_in_seconds)
+        @bucket_size = BucketSize.new(options.fetch(:bucket_size_in_seconds, 10))
         @storage = options.fetch(:storage) { Storage::Memory.new }
         @buckets = []
       end
 
       def mark_success
-        timestamp = Time.now.to_i
-        bucket_start = @bucket_size.aligned_start(timestamp)
-        bucket = bucket(bucket_start)
-        @storage.increment(bucket, StorageSuccessKeys)
-        prune_buckets(timestamp)
+        @storage.increment(current_bucket, StorageSuccessKeys)
+        prune_buckets
         nil
       end
 
       def mark_failure
-        timestamp = Time.now.to_i
-        bucket_start = @bucket_size.aligned_start(timestamp)
-        bucket = bucket(bucket_start)
-        @storage.increment(bucket, StorageFailureKeys)
-        prune_buckets(timestamp)
+        @storage.increment(current_bucket, StorageFailureKeys)
+        prune_buckets
         nil
       end
 
@@ -149,7 +142,7 @@ module Resilient
 
       private
 
-      def bucket(timestamp)
+      def current_bucket(timestamp = Time.now.to_i)
         bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }
         return bucket if bucket
 
