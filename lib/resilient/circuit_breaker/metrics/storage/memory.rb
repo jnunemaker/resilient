@@ -27,6 +27,16 @@ module Resilient
             result
           end
 
+          def sum(buckets, keys)
+            response = Hash.new(0)
+            Array(buckets).each do |bucket|
+              Array(keys).each do |key|
+                response[key] += @source[bucket][key]
+              end
+            end
+            response
+          end
+
           def reset(buckets, keys)
             Array(buckets).each do |bucket|
               @source.delete(bucket)

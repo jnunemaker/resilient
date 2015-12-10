@@ -97,37 +97,29 @@ module Resilient
 
       def successes
         prune_buckets
-
-        @storage.get(@buckets, :successes).values.inject(0) { |sum, value|
-          sum += value[:successes]
-        }
+        @storage.sum(@buckets, :successes)[:successes]
       end
 
       def failures
         prune_buckets
-
-        @storage.get(@buckets, :failures).values.inject(0) { |sum, value|
-          sum += value[:failures]
-        }
+        @storage.sum(@buckets, :failures)[:failures]
       end
 
       def requests
         prune_buckets
-
-        @storage.get(@buckets, StorageKeys).values.inject(0) { |sum, value|
-          sum += value[:failures] + value[:successes]
-        }
+        requests = 0
+        @storage.sum(@buckets, StorageKeys).each do |key, value|
+          requests += value
+        end
+        requests
       end
 
       def error_percentage
         prune_buckets
-        successes = 0
-        failures = 0
 
-        @storage.get(@buckets, StorageKeys).values.each do |value|
-          successes += value[:successes]
-          failures += value[:failures]
-        end
+        result = @storage.sum(@buckets, StorageKeys)
+        successes = result[:successes]
+        failures = result[:failures]
 
         requests = successes + failures
         return 0 if failures == 0 || requests == 0
