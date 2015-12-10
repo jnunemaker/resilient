@@ -17,16 +17,6 @@ module Resilient
             end
           end
 
-          def get(buckets, keys)
-            result = Hash.new { |h, k| h[k] = Hash.new(0) }
-            Array(buckets).each do |bucket|
-              Array(keys).each do |key|
-                result[bucket][key] = @source[bucket][key]
-              end
-            end
-            result
-          end
-
           def sum(buckets, keys)
             response = Hash.new(0)
             Array(buckets).each do |bucket|

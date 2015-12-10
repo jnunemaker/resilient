@@ -5,10 +5,6 @@ module Resilient
         assert_respond_to @object, :increment
       end
 
-      def test_responds_to_get
-        assert_respond_to @object, :get
-      end
-
       def test_responds_to_sum
         assert_respond_to @object, :sum
       end
@@ -33,7 +29,7 @@ module Resilient
         assert_equal 1, @object.source[buckets[1]][:failures]
       end
 
-      def test_get_defaults
+      def test_sum_defaults
         buckets = [
           Resilient::CircuitBreaker::Metrics::Bucket.new(1, 5),
           Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
@@ -42,33 +38,12 @@ module Resilient
           :successes,
           :failures,
         ]
-        result = @object.get(buckets, keys)
-        assert_equal 0, result[buckets[0]][:successes]
-        assert_equal 0, result[buckets[0]][:failures]
-        assert_equal 0, result[buckets[1]][:successes]
-        assert_equal 0, result[buckets[1]][:failures]
+        result = @object.sum(buckets, keys)
+        assert_equal 0, result[:successes]
+        assert_equal 0, result[:failures]
       end
 
-      def test_get_with_values
-        buckets = [
-          Resilient::CircuitBreaker::Metrics::Bucket.new(1, 5),
-          Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
-        ]
-        keys = [
-          :successes,
-          :failures,
-        ]
-        @object.increment(buckets, keys)
-        @object.increment(buckets, keys)
-        @object.increment(buckets[0], keys)
-        result = @object.get(buckets, keys)
-        assert_equal 3, result[buckets[0]][:successes]
-        assert_equal 3, result[buckets[0]][:failures]
-        assert_equal 2, result[buckets[1]][:successes]
-        assert_equal 2, result[buckets[1]][:failures]
-      end
-
-      def test_sum
+      def test_sum_with_values
         buckets = [
           Resilient::CircuitBreaker::Metrics::Bucket.new(1, 5),
           Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
@@ -107,11 +82,9 @@ module Resilient
         @object.increment(buckets, keys)
         @object.increment(buckets[0], keys)
         @object.prune(buckets, keys)
-        result = @object.get(buckets, keys)
-        assert_equal 0, result[buckets[0]][:successes]
-        assert_equal 0, result[buckets[0]][:failures]
-        assert_equal 0, result[buckets[1]][:successes]
-        assert_equal 0, result[buckets[1]][:failures]
+        result = @object.sum(buckets, keys)
+        assert_equal 0, result[:successes]
+        assert_equal 0, result[:failures]
       end
     end
   end

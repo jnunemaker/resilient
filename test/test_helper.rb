@@ -5,7 +5,13 @@ require "pathname"
 module Resilient
   class Test < Minitest::Test
     def debug_metrics(metrics, indent: "")
-      result = metrics.storage.get(metrics.buckets, [:success, :failure])
+      keys = [:success, :failure]
+      result = Hash.new { |h, k| h[k] = Hash.new(0) }
+      metrics.buckets.each do |bucket|
+        keys.each do |key|
+          result[bucket][key] = metrics.storage.sum(bucket, key)[key]
+        end
+      end
 
       max_successes = result.values.map { |value| value[:success] }.max || 0
       max_failures = result.values.map { |value| value[:failure] }.max || 0
