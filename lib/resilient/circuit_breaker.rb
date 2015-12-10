@@ -122,10 +122,6 @@ module Resilient
       true
     end
 
-    def closed?
-      !open?
-    end
-
     def allow_single_request?
       now = Time.now.to_i
 
