@@ -67,7 +67,7 @@ module Resilient
       end
 
       def test_allows_overriding_window_size_in_seconds
-        assert_equal 8, Properties.new(window_size_in_seconds: 8).window_size_in_seconds
+        assert_equal 120, Properties.new(window_size_in_seconds: 120).window_size_in_seconds
       end
 
       def test_defaults_bucket_size_in_seconds
@@ -75,7 +75,34 @@ module Resilient
       end
 
       def test_allows_overriding_bucket_size_in_seconds
-        assert_equal 111, Properties.new(bucket_size_in_seconds: 111).bucket_size_in_seconds
+        assert_equal 2, Properties.new(bucket_size_in_seconds: 2).bucket_size_in_seconds
+      end
+
+      def test_raises_bucket_size_greater_than_window_size
+        assert_raises ArgumentError do
+          Properties.new({
+            window_size_in_seconds: 8,
+            bucket_size_in_seconds: 10,
+          })
+        end
+      end
+
+      def test_raises_bucket_size_equal_to_window_size
+        assert_raises ArgumentError do
+          Properties.new({
+            window_size_in_seconds: 8,
+            bucket_size_in_seconds: 8,
+          })
+        end
+      end
+
+      def test_raises_if_window_size_not_perfectly_divisible_by_bucket_size
+        assert_raises ArgumentError do
+          Properties.new({
+            window_size_in_seconds: 21,
+            bucket_size_in_seconds: 4,
+          })
+        end
       end
     end
   end

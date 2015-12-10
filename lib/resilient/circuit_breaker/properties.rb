@@ -40,6 +40,16 @@ module Resilient
         @error_threshold_percentage = options.fetch(:error_threshold_percentage, 50)
         @window_size_in_seconds = options.fetch(:window_size_in_seconds, 60)
         @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
+
+        if @bucket_size_in_seconds >= @window_size_in_seconds
+          raise ArgumentError, "bucket_size_in_seconds must be smaller than window_size_in_seconds"
+        end
+
+        if @window_size_in_seconds % @bucket_size_in_seconds != 0
+          raise ArgumentError,
+            "window_size_in_seconds must be perfectly divisible by" +
+            " bucket_size_in_seconds in order to evenly partition the buckets"
+        end
       end
     end
   end
