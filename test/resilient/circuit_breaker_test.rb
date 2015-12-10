@@ -1,5 +1,6 @@
 require "test_helper"
 require "resilient/circuit_breaker"
+require "resilient/test/circuit_breaker_interface"
 
 module Resilient
   class CircuitBreakerTest < Resilient::Test
@@ -7,7 +8,7 @@ module Resilient
       @object = CircuitBreaker.new
     end
 
-    include CircuitBreakerInterfaceTest
+    include Test::CircuitBreakerInterface
 
     def test_allow_request_when_under_error_threshold_percentage
       config = CircuitBreaker::Config.new(default_test_config_options({

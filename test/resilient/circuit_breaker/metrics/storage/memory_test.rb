@@ -1,5 +1,6 @@
 require "test_helper"
-require "resilient/circuit_breaker/config"
+require "resilient/circuit_breaker/metrics/storage/memory"
+require "resilient/test/metrics_storage_interface"
 
 module Resilient
   class CircuitBreaker
@@ -10,7 +11,7 @@ module Resilient
             @object = Memory.new
           end
 
-          include MetricsStorageInterfaceTest
+          include Test::MetricsStorageInterface
         end
       end
     end

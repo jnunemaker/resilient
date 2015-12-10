@@ -2,6 +2,7 @@ require "test_helper"
 require "resilient/circuit_breaker/config"
 require "resilient/instrumenters/noop"
 require "resilient/instrumenters/memory"
+require "resilient/test/config_interface"
 
 module Resilient
   class CircuitBreaker
@@ -10,7 +11,7 @@ module Resilient
         @object = Config.new
       end
 
-      include ConfigInterfaceTest
+      include Test::ConfigInterface
 
       def test_defaults_force_open
         assert_equal false, @object.force_open

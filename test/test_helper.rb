@@ -2,9 +2,6 @@ require "minitest/autorun"
 require "timecop"
 require "pathname"
 
-root = Pathname(__FILE__).dirname.expand_path
-Dir[root.join("support", "**", "*.rb")].each { |f| require f }
-
 module Resilient
   class Test < Minitest::Test
     def debug_metrics(metrics, indent: "")

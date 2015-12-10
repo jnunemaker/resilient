@@ -1,5 +1,6 @@
 require "test_helper"
 require "resilient/circuit_breaker/metrics"
+require "resilient/test/metrics_interface"
 
 module Resilient
   class CircuitBreaker
@@ -8,7 +9,7 @@ module Resilient
         @object = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
       end
 
-      include MetricsInterfaceTest
+      include Test::MetricsInterface
 
       def test_mark_success
         metrics = Metrics.new(number_of_buckets: 5, bucket_size_in_seconds: 1)
