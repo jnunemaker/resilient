@@ -21,14 +21,14 @@ module MetricsStorageInterfaceTest
       Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
     ]
     keys = [
-      :success,
-      :failure,
+      :successes,
+      :failures,
     ]
     @object.increment(buckets, keys)
-    assert_equal 1, @object.source[buckets[0]][:success]
-    assert_equal 1, @object.source[buckets[0]][:failure]
-    assert_equal 1, @object.source[buckets[1]][:success]
-    assert_equal 1, @object.source[buckets[1]][:failure]
+    assert_equal 1, @object.source[buckets[0]][:successes]
+    assert_equal 1, @object.source[buckets[0]][:failures]
+    assert_equal 1, @object.source[buckets[1]][:successes]
+    assert_equal 1, @object.source[buckets[1]][:failures]
   end
 
   def test_get_defaults
@@ -37,14 +37,14 @@ module MetricsStorageInterfaceTest
       Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
     ]
     keys = [
-      :success,
-      :failure,
+      :successes,
+      :failures,
     ]
     result = @object.get(buckets, keys)
-    assert_equal 0, result[buckets[0]][:success]
-    assert_equal 0, result[buckets[0]][:failure]
-    assert_equal 0, result[buckets[1]][:success]
-    assert_equal 0, result[buckets[1]][:failure]
+    assert_equal 0, result[buckets[0]][:successes]
+    assert_equal 0, result[buckets[0]][:failures]
+    assert_equal 0, result[buckets[1]][:successes]
+    assert_equal 0, result[buckets[1]][:failures]
   end
 
   def test_get_with_values
@@ -53,17 +53,17 @@ module MetricsStorageInterfaceTest
       Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
     ]
     keys = [
-      :success,
-      :failure,
+      :successes,
+      :failures,
     ]
     @object.increment(buckets, keys)
     @object.increment(buckets, keys)
     @object.increment(buckets[0], keys)
     result = @object.get(buckets, keys)
-    assert_equal 3, result[buckets[0]][:success]
-    assert_equal 3, result[buckets[0]][:failure]
-    assert_equal 2, result[buckets[1]][:success]
-    assert_equal 2, result[buckets[1]][:failure]
+    assert_equal 3, result[buckets[0]][:successes]
+    assert_equal 3, result[buckets[0]][:failures]
+    assert_equal 2, result[buckets[1]][:successes]
+    assert_equal 2, result[buckets[1]][:failures]
   end
 
   def test_reset
@@ -72,18 +72,18 @@ module MetricsStorageInterfaceTest
       Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
     ]
     keys = [
-      :success,
-      :failure,
+      :successes,
+      :failures,
     ]
     @object.increment(buckets, keys)
     @object.increment(buckets, keys)
     @object.increment(buckets[0], keys)
     @object.reset(buckets, keys)
     result = @object.get(buckets, keys)
-    assert_equal 0, result[buckets[0]][:success]
-    assert_equal 0, result[buckets[0]][:failure]
-    assert_equal 0, result[buckets[1]][:success]
-    assert_equal 0, result[buckets[1]][:failure]
+    assert_equal 0, result[buckets[0]][:successes]
+    assert_equal 0, result[buckets[0]][:failures]
+    assert_equal 0, result[buckets[1]][:successes]
+    assert_equal 0, result[buckets[1]][:failures]
   end
 
   def test_prune
@@ -92,17 +92,17 @@ module MetricsStorageInterfaceTest
       Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
     ]
     keys = [
-      :success,
-      :failure,
+      :successes,
+      :failures,
     ]
     @object.increment(buckets, keys)
     @object.increment(buckets, keys)
     @object.increment(buckets[0], keys)
     @object.prune(buckets, keys)
     result = @object.get(buckets, keys)
-    assert_equal 0, result[buckets[0]][:success]
-    assert_equal 0, result[buckets[0]][:failure]
-    assert_equal 0, result[buckets[1]][:success]
-    assert_equal 0, result[buckets[1]][:failure]
+    assert_equal 0, result[buckets[0]][:successes]
+    assert_equal 0, result[buckets[0]][:failures]
+    assert_equal 0, result[buckets[1]][:successes]
+    assert_equal 0, result[buckets[1]][:failures]
   end
 end

@@ -9,6 +9,11 @@ module Resilient
       attr_reader :buckets
       attr_reader :storage
 
+      StorageKeys = [
+        :successes,
+        :failures,
+      ]
+
       def initialize(options = {})
         @number_of_buckets = options.fetch(:number_of_buckets, 6)
         @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
@@ -20,7 +25,7 @@ module Resilient
         timestamp = Time.now.to_i
         bucket_start = timestamp / @bucket_size_in_seconds * @bucket_size_in_seconds
         bucket = bucket(bucket_start)
-        @storage.increment(bucket, [:success])
+        @storage.increment(bucket, [:successes])
         prune_buckets(timestamp)
         nil
       end
@@ -29,29 +34,29 @@ module Resilient
         timestamp = Time.now.to_i
         bucket_start = timestamp / @bucket_size_in_seconds * @bucket_size_in_seconds
         bucket = bucket(bucket_start)
-        @storage.increment(bucket, [:failure])
+        @storage.increment(bucket, [:failures])
         prune_buckets(timestamp)
         nil
       end
 
       def successes
         prune_buckets
-        @storage.get(@buckets, :success).values.inject(0) { |sum, value|
-          sum += value[:success]
+        @storage.get(@buckets, :successes).values.inject(0) { |sum, value|
+          sum += value[:successes]
         }
       end
 
       def failures
         prune_buckets
-        @storage.get(@buckets, :failure).values.inject(0) { |sum, value|
-          sum += value[:failure]
+        @storage.get(@buckets, :failures).values.inject(0) { |sum, value|
+          sum += value[:failures]
         }
       end
 
       def requests
         prune_buckets
-        @storage.get(@buckets, [:success, :failure]).values.inject(0) { |sum, value|
-          sum += value[:failure] + value[:success]
+        @storage.get(@buckets, StorageKeys).values.inject(0) { |sum, value|
+          sum += value[:failures] + value[:successes]
         }
       end
 
@@ -59,9 +64,9 @@ module Resilient
         prune_buckets
         successes = 0
         failures = 0
-        @storage.get(@buckets, [:success, :failure]).values.each do |value|
-          successes += value[:success]
-          failures += value[:failure]
+        @storage.get(@buckets, StorageKeys).values.each do |value|
+          successes += value[:successes]
+          failures += value[:failures]
         end
         requests = successes + failures
         return 0 if failures == 0 || requests == 0
@@ -69,7 +74,7 @@ module Resilient
       end
 
       def reset
-        @storage.reset(@buckets, [:success, :failure])
+        @storage.reset(@buckets, StorageKeys)
         nil
       end
 
@@ -98,7 +103,7 @@ module Resilient
           end
         }
         if pruned_buckets.any?
-          @storage.prune(pruned_buckets, [:success, :failure])
+          @storage.prune(pruned_buckets, StorageKeys)
         end
       end
     end
