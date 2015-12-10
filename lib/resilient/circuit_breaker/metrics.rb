@@ -72,7 +72,7 @@ module Resilient
       end
 
       def reset
-        @storage.reset(@buckets, StorageKeys)
+        @storage.prune(@buckets, StorageKeys)
         nil
       end
 

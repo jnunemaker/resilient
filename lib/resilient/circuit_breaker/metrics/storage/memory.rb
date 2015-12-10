@@ -37,14 +37,10 @@ module Resilient
             response
           end
 
-          def reset(buckets, keys)
+          def prune(buckets, keys)
             Array(buckets).each do |bucket|
               @source.delete(bucket)
             end
-          end
-
-          def prune(buckets, keys)
-            reset(buckets, keys)
           end
         end
       end

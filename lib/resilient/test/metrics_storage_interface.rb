@@ -17,10 +17,6 @@ module Resilient
         assert_respond_to @object, :prune
       end
 
-      def test_responds_to_reset
-        assert_respond_to @object, :reset
-      end
-
       def test_increment
         buckets = [
           Resilient::CircuitBreaker::Metrics::Bucket.new(1, 5),
@@ -96,26 +92,6 @@ module Resilient
         assert_equal 2, @object.sum(buckets[1], [:successes])[:successes]
         assert_equal 2, @object.sum(buckets[1], [:failures])[:failures]
         assert_equal 4, @object.sum(buckets[1], keys).values.inject(0) { |sum, value| sum += value }
-      end
-
-      def test_reset
-        buckets = [
-          Resilient::CircuitBreaker::Metrics::Bucket.new(1, 5),
-          Resilient::CircuitBreaker::Metrics::Bucket.new(6, 10),
-        ]
-        keys = [
-          :successes,
-          :failures,
-        ]
-        @object.increment(buckets, keys)
-        @object.increment(buckets, keys)
-        @object.increment(buckets[0], keys)
-        @object.reset(buckets, keys)
-        result = @object.get(buckets, keys)
-        assert_equal 0, result[buckets[0]][:successes]
-        assert_equal 0, result[buckets[0]][:failures]
-        assert_equal 0, result[buckets[1]][:successes]
-        assert_equal 0, result[buckets[1]][:failures]
       end
 
       def test_prune
