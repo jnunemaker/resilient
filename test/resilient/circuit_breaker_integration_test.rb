@@ -7,7 +7,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
-        number_of_buckets: 6,
+        window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
       circuit_breaker = CircuitBreaker.new(properties: properties)
@@ -32,7 +32,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 20,
-        number_of_buckets: 6,
+        window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
       circuit_breaker = CircuitBreaker.new(properties: properties)
@@ -90,7 +90,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         error_threshold_percentage: 25,
         request_volume_threshold: 0,
-        number_of_buckets: 6,
+        window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
       circuit_breaker = CircuitBreaker.new(properties: properties)

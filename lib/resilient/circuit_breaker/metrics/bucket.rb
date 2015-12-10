@@ -10,8 +10,8 @@ module Resilient
           @timestamp_end = timestamp_end
         end
 
-        def prune_before(number_of_buckets, bucket_size)
-          @timestamp_end - (number_of_buckets * bucket_size.seconds)
+        def prune_before(window_size)
+          @timestamp_end - window_size.seconds
         end
 
         def include?(timestamp)

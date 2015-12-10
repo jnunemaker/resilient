@@ -2,9 +2,9 @@ module Resilient
   class CircuitBreaker
     class Metrics
       class BucketRange
-        def self.generate(timestamp, number_of_buckets, bucket_size)
+        def self.generate(timestamp, window_size, bucket_size)
           end_bucket = bucket_size.bucket(timestamp)
-          start_bucket = bucket_size.bucket(end_bucket.prune_before(number_of_buckets, bucket_size))
+          start_bucket = bucket_size.bucket(end_bucket.prune_before(window_size))
           bucket_range = new(start_bucket, end_bucket)
         end
 

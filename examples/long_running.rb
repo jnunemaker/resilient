@@ -12,7 +12,7 @@ properties = Resilient::CircuitBreaker::Properties.new({
   sleep_window_seconds: 5,
   request_volume_threshold: 20,
   error_threshold_percentage: 10,
-  number_of_buckets: 10,
+  window_size_in_seconds: 60,
   bucket_size_in_seconds: 1,
 })
 circuit_breaker = Resilient::CircuitBreaker.new(properties: properties)

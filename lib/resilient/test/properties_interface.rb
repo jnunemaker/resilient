@@ -25,10 +25,6 @@ module Resilient
         assert_respond_to @object, :error_threshold_percentage
       end
 
-      def test_responds_to_number_of_buckets
-        assert_respond_to @object, :number_of_buckets
-      end
-
       def test_responds_to_bucket_size_in_seconds
         assert_respond_to @object, :bucket_size_in_seconds
       end

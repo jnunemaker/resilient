@@ -25,8 +25,8 @@ module Resilient
       # % of "marks" that must be failed to trip the circuit
       attr_reader :error_threshold_percentage
 
-      # number of buckets in the statistical window
-      attr_reader :number_of_buckets
+      # number of seconds in the statistical window
+      attr_reader :window_size_in_seconds
 
       # size of buckets in statistical window
       attr_reader :bucket_size_in_seconds
@@ -38,7 +38,7 @@ module Resilient
         @sleep_window_seconds = options.fetch(:sleep_window_seconds, 5)
         @request_volume_threshold = options.fetch(:request_volume_threshold, 20)
         @error_threshold_percentage = options.fetch(:error_threshold_percentage, 50)
-        @number_of_buckets = options.fetch(:number_of_buckets, 6)
+        @window_size_in_seconds = options.fetch(:window_size_in_seconds, 60)
         @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
       end
     end

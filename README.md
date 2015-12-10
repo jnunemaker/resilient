@@ -75,7 +75,7 @@ customize rolling window to be 10 buckets of 1 second each (10 seconds in all):
 
 ```ruby
 metrics = Resilient::CircuitBreaker::Metrics.new({
-  number_of_buckets: 10,
+  window_size_in_seconds: 10,
   bucket_size_in_seconds: 1,
 })
 circuit_breaker = Resilient::CircuitBreaker.new(metrics: metrics)

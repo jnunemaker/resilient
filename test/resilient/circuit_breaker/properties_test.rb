@@ -62,12 +62,12 @@ module Resilient
         assert_equal 12, Properties.new(error_threshold_percentage: 12).error_threshold_percentage
       end
 
-      def test_defaults_number_of_buckets
-        assert_equal 6, @object.number_of_buckets
+      def test_defaults_window_size_in_seconds
+        assert_equal 60, @object.window_size_in_seconds
       end
 
-      def test_allows_overriding_number_of_buckets
-        assert_equal 8, Properties.new(number_of_buckets: 8).number_of_buckets
+      def test_allows_overriding_window_size_in_seconds
+        assert_equal 8, Properties.new(window_size_in_seconds: 8).window_size_in_seconds
       end
 
       def test_defaults_bucket_size_in_seconds

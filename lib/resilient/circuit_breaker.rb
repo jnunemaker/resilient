@@ -22,7 +22,7 @@ module Resilient
         metrics
       else
         Metrics.new({
-          number_of_buckets: @properties.number_of_buckets,
+          window_size_in_seconds: @properties.window_size_in_seconds,
           bucket_size_in_seconds: @properties.bucket_size_in_seconds,
         })
       end

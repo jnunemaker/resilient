@@ -1,11 +1,12 @@
 require "resilient/circuit_breaker/metrics/storage/memory"
 require "resilient/circuit_breaker/metrics/bucket_range"
 require "resilient/circuit_breaker/metrics/bucket_size"
+require "resilient/circuit_breaker/metrics/window_size"
 
 module Resilient
   class CircuitBreaker
     class Metrics
-      attr_reader :number_of_buckets
+      attr_reader :window_size_in_seconds
       attr_reader :bucket_size_in_seconds
       attr_reader :buckets
       attr_reader :storage
@@ -21,8 +22,10 @@ module Resilient
       StorageKeys = (StorageSuccessKeys + StorageFailureKeys).freeze
 
       def initialize(options = {})
-        @number_of_buckets = options.fetch(:number_of_buckets, 6)
-        @bucket_size = BucketSize.new(options.fetch(:bucket_size_in_seconds, 10))
+        @window_size_in_seconds = options.fetch(:window_size_in_seconds, 60)
+        @bucket_size_in_seconds = options.fetch(:bucket_size_in_seconds, 10)
+        @window_size = WindowSize.new(@window_size_in_seconds)
+        @bucket_size = BucketSize.new(@bucket_size_in_seconds)
         @storage = options.fetch(:storage) { Storage::Memory.new }
         @buckets = []
       end
@@ -90,7 +93,7 @@ module Resilient
 
       def prune_buckets(timestamp = Time.now.to_i)
         pruned_buckets = []
-        bucket_range = BucketRange.generate(timestamp, @number_of_buckets, @bucket_size)
+        bucket_range = BucketRange.generate(timestamp, @window_size, @bucket_size)
 
         @buckets.delete_if { |bucket|
           if bucket_range.prune?(bucket)
