@@ -9,48 +9,6 @@ module Resilient
           bucket = Bucket.new(0, 1)
           assert_equal 0, bucket.timestamp_start
           assert_equal 1, bucket.timestamp_end
-          assert_equal 0, bucket.successes
-          assert_equal 0, bucket.failures
-        end
-
-        def test_mark_success
-          bucket = Bucket.new(0, 1)
-          assert_equal 0, bucket.successes
-          bucket.mark_success
-          assert_equal 1, bucket.successes
-        end
-
-        def test_mark_failure
-          bucket = Bucket.new(0, 1)
-          assert_equal 0, bucket.failures
-          bucket.mark_failure
-          assert_equal 1, bucket.failures
-        end
-
-        def test_requests_counts_successes_and_failures
-          bucket = Bucket.new(0, 1)
-          bucket.mark_success
-          bucket.mark_failure
-          assert_equal 2, bucket.requests
-        end
-
-        def test_error_percentage_returns_zero_if_zero_requests
-          bucket = Bucket.new(0, 1)
-          assert_equal 0, bucket.error_percentage
-        end
-
-        def test_error_percentage_returns_zero_if_zero_failures
-          bucket = Bucket.new(0, 1)
-          bucket.mark_success
-          assert_equal 0, bucket.error_percentage
-        end
-
-        def test_error_percentage
-          bucket = Bucket.new(0, 1)
-          bucket.mark_success
-          bucket.mark_failure
-          bucket.mark_failure
-          assert_equal 67, bucket.error_percentage
         end
 
         def test_bucket_size_in_seconds

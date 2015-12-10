@@ -8,25 +8,25 @@ Dir[root.join("support", "**", "*.rb")].each { |f| require f }
 module Resilient
   class Test < Minitest::Test
     def debug_metrics(metrics, indent: "")
-      buckets = metrics.buckets
+      result = metrics.storage.get(metrics.buckets, [:success, :failure])
 
-      max_requests = buckets.map { |bucket| bucket.requests }.max || 0
-      max_successes = buckets.map { |bucket| bucket.successes }.max || 0
-      max_failures = buckets.map { |bucket| bucket.failures }.max || 0
+      max_successes = result.values.map { |value| value[:success] }.max || 0
+      max_failures = result.values.map { |value| value[:failure] }.max || 0
+      max_requests = result.values.map { |value| value[:success] + value[:failure] }.max || 0
 
       requests_pad = max_requests.to_s.length
       successes_pad = max_successes.to_s.length
       failures_pad = max_failures.to_s.length
 
-      buckets_debug = buckets.map { |bucket|
+      buckets_debug = metrics.buckets.map { |bucket|
         "%s%s - %s (%s): %s + %s = %s" % [
           indent,
           bucket.timestamp_start,
           bucket.timestamp_end,
           bucket.size_in_seconds,
-          bucket.successes.to_s.rjust(successes_pad),
-          bucket.failures.to_s.rjust(failures_pad),
-          bucket.requests.to_s.rjust(requests_pad),
+          result[bucket][:success].to_s.rjust(successes_pad),
+          result[bucket][:failure].to_s.rjust(failures_pad),
+          (result[bucket][:success] + result[bucket][:failure]).to_s.rjust(requests_pad),
         ]
       }.join("\n")
     end

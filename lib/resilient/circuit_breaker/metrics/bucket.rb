@@ -14,23 +14,6 @@ module Resilient
           @failures = 0
         end
 
-        def mark_success
-          @successes += 1
-        end
-
-        def mark_failure
-          @failures += 1
-        end
-
-        def requests
-          @successes + @failures
-        end
-
-        def error_percentage
-          return 0 if @failures == 0 || requests == 0
-          ((@failures / requests.to_f) * 100).round
-        end
-
         def size_in_seconds
           # inclusive of start second so we add 1
           @timestamp_end - @timestamp_start + 1
