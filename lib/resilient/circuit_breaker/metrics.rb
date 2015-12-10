@@ -30,6 +30,10 @@ module Resilient
         def prune_before(number_of_buckets, bucket_size)
           @timestamp_end - (number_of_buckets * bucket_size.seconds)
         end
+
+        def include?(timestamp)
+          timestamp >= @timestamp_start && timestamp <= @timestamp_end
+        end
       end
 
       class BucketSize
@@ -126,10 +130,7 @@ module Resilient
       private
 
       def bucket(timestamp)
-        bucket = @buckets.detect { |bucket|
-          timestamp >= bucket.timestamp_start && timestamp <= bucket.timestamp_end
-        }
-
+        bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }
         return bucket if bucket
 
         bucket = @bucket_size.bucket(timestamp)
