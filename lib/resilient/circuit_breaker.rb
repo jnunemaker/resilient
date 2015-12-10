@@ -10,7 +10,9 @@ module Resilient
     attr_reader :metrics
     attr_reader :properties
 
-    def initialize(key:, open: false, properties: nil, metrics: nil)
+    def initialize(key: nil, open: false, properties: nil, metrics: nil)
+      # ruby 2.0 does not support required keyword arguments, this gets around that
+      raise ArgumentError, "key argument is required" if key.nil?
       @key = key
       @open = open
       @opened_or_last_checked_at_epoch = 0
