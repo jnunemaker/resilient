@@ -49,7 +49,7 @@ module Resilient
             # single request, etc. so it is possible to test properties in
             # production without impact
             if payload[:open] = open?
-              payload[:allow_single_request] = allow_single_request?
+              allow_single_request?
             end
 
             true
@@ -57,7 +57,7 @@ module Resilient
             if !(payload[:open] = open?)
               true
             else
-              payload[:allow_single_request] = allow_single_request?
+              allow_single_request?
             end
           end
         end
@@ -138,14 +138,16 @@ module Resilient
     end
 
     def allow_single_request?
-      now = Time.now.to_i
+      instrument("resilient.circuit_breaker.allow_single_request") { |payload|
+        now = Time.now.to_i
 
-      if @open && now > (@opened_or_last_checked_at_epoch + @properties.sleep_window_seconds)
-        @opened_or_last_checked_at_epoch = now
-        true
-      else
-        false
-      end
+        payload[:result] = if @open && now > (@opened_or_last_checked_at_epoch + @properties.sleep_window_seconds)
+          @opened_or_last_checked_at_epoch = now
+          true
+        else
+          false
+        end
+      }
     end
 
     def instrument(name, payload = {}, &block)
