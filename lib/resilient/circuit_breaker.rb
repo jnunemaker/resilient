@@ -35,7 +35,7 @@ module Resilient
 
     def allow_request?
       instrument("resilient.circuit_breaker.allow_request", {key: @key}) { |payload|
-        result = if payload[:force_open] = @properties.force_open
+        payload[:result] = if payload[:force_open] = @properties.force_open
           false
         else
           # we still want to simulate normal behavior/metrics like open, allow
@@ -50,8 +50,6 @@ module Resilient
             allow_request
           end
         end
-
-        payload[:result] = result
       }
     end
 
