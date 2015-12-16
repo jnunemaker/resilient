@@ -34,13 +34,7 @@ module Resilient
     end
 
     def allow_request?
-      default_payload = {
-        key: @key,
-        force_open: false,
-        force_closed: false,
-      }
-
-      instrument("resilient.circuit_breaker.allow_request", default_payload) { |payload|
+      instrument("resilient.circuit_breaker.allow_request", {key: @key}) { |payload|
         result = if payload[:force_open] = @properties.force_open
           false
         else
@@ -62,12 +56,7 @@ module Resilient
     end
 
     def success
-      default_payload = {
-        key: @key,
-        closed_the_circuit: false,
-      }
-
-      instrument("resilient.circuit_breaker.success", default_payload) { |payload|
+      instrument("resilient.circuit_breaker.success", {key: @key}) { |payload|
         if @open
           payload[:closed_the_circuit] = true
           close_circuit
@@ -79,22 +68,14 @@ module Resilient
     end
 
     def failure
-      default_payload = {
-        key: @key,
-      }
-
-      instrument("resilient.circuit_breaker.failure", default_payload) { |payload|
+      instrument("resilient.circuit_breaker.failure", {key: @key}) { |payload|
         @metrics.failure
         nil
       }
     end
 
     def reset
-      default_payload = {
-        key: @key,
-      }
-
-      instrument("resilient.circuit_breaker.reset", default_payload) { |payload|
+      instrument("resilient.circuit_breaker.reset", {key: @key}) { |payload|
         @open = false
         @opened_or_last_checked_at_epoch = 0
         @metrics.reset

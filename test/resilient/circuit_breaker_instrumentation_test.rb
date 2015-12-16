@@ -211,7 +211,7 @@ module Resilient
       refute_nil event
       assert_equal "resilient.circuit_breaker.success", event.name
       assert_equal "test", event.payload.fetch(:key).name
-      assert_equal false, event.payload[:closed_the_circuit]
+      assert_nil event.payload[:closed_the_circuit]
     end
 
     def test_instruments_success_when_circuit_open
