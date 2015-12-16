@@ -44,21 +44,16 @@ module Resilient
         result = if payload[:force_open] = @properties.force_open
           false
         else
-          if payload[:force_closed] = @properties.force_closed
-            # we still want to simulate normal behavior/metrics like open, allow
-            # single request, etc. so it is possible to test properties in
-            # production without impact
-            if payload[:open] = open?
-              allow_single_request?
-            end
+          # we still want to simulate normal behavior/metrics like open, allow
+          # single request, etc. so it is possible to test properties in
+          # production without impact using force_closed so we run these here
+          # instead of in the else below
+          allow_request = !open? || allow_single_request?
 
+          if payload[:force_closed] = @properties.force_closed
             true
           else
-            if !(payload[:open] = open?)
-              true
-            else
-              allow_single_request?
-            end
+            allow_request
           end
         end
 
@@ -129,12 +124,22 @@ module Resilient
     end
 
     def open?
-      return true if @open
-      return false if under_request_volume_threshold?
-      return false if under_error_threshold_percentage?
-
-      open_circuit
-      true
+      instrument("resilient.circuit_breaker.open") { |payload|
+        payload[:result] = if @open
+          true
+        else
+          if under_request_volume_threshold?
+            false
+          else
+            if under_error_threshold_percentage?
+              false
+            else
+              open_circuit
+              true
+            end
+          end
+        end
+      }
     end
 
     def allow_single_request?
