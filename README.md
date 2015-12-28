@@ -63,7 +63,7 @@ circuit_breaker = Resilient::CircuitBreaker.new(properties: properties, key: Res
 # etc etc etc
 ```
 
-force the circuit to be always closed:
+force the circuit to be always closed (great way to test in production with no impact, all instrumentation still runs which means you can measure in production with config and gain confidence while never actually opening a circuit incorrectly):
 
 ```ruby
 properties = Resilient::CircuitBreaker::Properties.new(force_closed: true)
