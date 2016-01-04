@@ -103,7 +103,7 @@ module Resilient
     end
 
     def open?
-      instrument("resilient.circuit_breaker.open") { |payload|
+      instrument("resilient.circuit_breaker.open", key: @key) { |payload|
         payload[:result] = if @open
           true
         else
