@@ -98,6 +98,7 @@ module Resilient
 
       event = instrumenter.events.detect { |event| event.name =~ /allow_single_request/ }
       assert event
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event[:result]
     end
 
@@ -136,6 +137,7 @@ module Resilient
 
       event = instrumenter.events.reverse.detect { |event| event.name =~ /allow_single_request/ }
       assert event
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event[:result]
     end
 
@@ -166,6 +168,7 @@ module Resilient
 
       event = instrumenter.events.reverse.detect { |event| event.name =~ /allow_single_request/ }
       assert event
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal false, event[:result]
     end
 
@@ -203,6 +206,7 @@ module Resilient
 
       event = instrumenter.events.reverse.detect { |event| event.name =~ /allow_single_request/ }
       assert event
+      assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event[:result]
     end
 

@@ -122,7 +122,7 @@ module Resilient
     end
 
     def allow_single_request?
-      instrument("resilient.circuit_breaker.allow_single_request") { |payload|
+      instrument("resilient.circuit_breaker.allow_single_request", key: @key) { |payload|
         now = Time.now.to_i
 
         payload[:result] = if @open && now > (@opened_or_last_checked_at_epoch + @properties.sleep_window_seconds)
