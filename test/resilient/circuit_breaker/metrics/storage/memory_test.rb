@@ -8,6 +8,7 @@ module Resilient
       module Storage
         class MemoryTest < Resilient::Test
           def setup
+            super
             @object = Memory.new
           end
 

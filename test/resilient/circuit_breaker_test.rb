@@ -5,10 +5,23 @@ require "resilient/test/circuit_breaker_interface"
 module Resilient
   class CircuitBreakerTest < Resilient::Test
     def setup
+      super
       @object = CircuitBreaker.new(key: Resilient::Key.new("test"))
     end
 
     include Test::CircuitBreakerInterface
+
+    def test_new
+      key = Resilient::Key.new("longmire")
+      first_initialization = CircuitBreaker.new(key: key)
+      assert_instance_of CircuitBreaker, first_initialization
+
+      second_initialization = CircuitBreaker.new(key: key)
+      assert_instance_of CircuitBreaker, second_initialization
+
+      assert first_initialization.equal?(second_initialization),
+        "#{first_initialization.inspect} is not the exact same object as #{second_initialization.inspect}"
+    end
 
     def test_key
       assert_equal "test", @object.key.name

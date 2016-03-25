@@ -6,6 +6,7 @@ module Resilient
   class CircuitBreaker
     class RegistryTest < Resilient::Test
       def setup
+        super
         @object = Registry.new
       end
 

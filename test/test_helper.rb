@@ -4,6 +4,10 @@ require "pathname"
 
 module Resilient
   class Test < Minitest::Test
+    def setup
+      CircuitBreaker.reset
+    end
+
     def debug_metrics(metrics, indent: "")
       keys = [:success, :failure]
       result = Hash.new { |h, k| h[k] = Hash.new(0) }

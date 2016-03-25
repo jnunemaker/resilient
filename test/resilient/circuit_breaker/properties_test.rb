@@ -8,6 +8,7 @@ module Resilient
   class CircuitBreaker
     class PropertiesTest < Resilient::Test
       def setup
+        super
         @object = Properties.new
       end
 
