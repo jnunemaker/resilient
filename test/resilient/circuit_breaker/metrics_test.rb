@@ -4,7 +4,7 @@ require "resilient/test/metrics_interface"
 
 module Resilient
   class CircuitBreaker
-    class MetricsTest < Resilient::Test
+    class MetricsTest < Test
       def setup
         super
         @object = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)

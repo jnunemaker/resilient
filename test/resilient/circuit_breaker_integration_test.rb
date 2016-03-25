@@ -2,7 +2,7 @@ require "test_helper"
 require "resilient/circuit_breaker"
 
 module Resilient
-  class CircuitBreakerIntegrationTest < Resilient::Test
+  class CircuitBreakerIntegrationTest < Test
     def test_enough_failures_in_time_window_open_circuit
       properties = CircuitBreaker::Properties.new({
         error_threshold_percentage: 25,

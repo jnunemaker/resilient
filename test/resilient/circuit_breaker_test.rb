@@ -3,7 +3,7 @@ require "resilient/circuit_breaker"
 require "resilient/test/circuit_breaker_interface"
 
 module Resilient
-  class CircuitBreakerTest < Resilient::Test
+  class CircuitBreakerTest < Test
     def setup
       super
       @object = CircuitBreaker.new(key: Resilient::Key.new("object"))

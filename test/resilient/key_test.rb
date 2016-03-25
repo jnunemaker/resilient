@@ -3,7 +3,7 @@ require "resilient/circuit_breaker"
 require "resilient/test/circuit_breaker_interface"
 
 module Resilient
-  class KeyTest < Resilient::Test
+  class KeyTest < Test
     def test_initialize_with_string
       key = Key.new("test")
       assert_equal "test", key.name

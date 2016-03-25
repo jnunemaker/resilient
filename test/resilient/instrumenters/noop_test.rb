@@ -3,7 +3,7 @@ require "resilient/instrumenters/noop"
 
 module Resilient
   module Instrumenters
-    class NoopTest < Resilient::Test
+    class NoopTest < Test
       def test_instrument_with_name
         yielded = false
         Noop.instrument(:foo) { yielded = true }

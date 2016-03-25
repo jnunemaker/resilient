@@ -4,7 +4,7 @@ require "resilient/circuit_breaker/properties"
 require "resilient/circuit_breaker/metrics/storage/memory"
 
 module Resilient
-  class CircuitBreakerInstrumentationTest < Resilient::Test
+  class CircuitBreakerInstrumentationTest < Test
     def test_instruments_allow_request
       instrumenter = Instrumenters::Memory.new
       properties = CircuitBreaker::Properties.new({

@@ -4,7 +4,7 @@ require "resilient/test/circuit_breaker_registry_interface"
 
 module Resilient
   class CircuitBreaker
-    class RegistryTest < Resilient::Test
+    class RegistryTest < Test
       def setup
         super
         @object = Registry.new

@@ -6,7 +6,7 @@ require "resilient/test/properties_interface"
 
 module Resilient
   class CircuitBreaker
-    class PropertiesTest < Resilient::Test
+    class PropertiesTest < Test
       def setup
         super
         @object = Properties.new
