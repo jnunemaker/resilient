@@ -5,8 +5,8 @@ module Resilient
         @source = source || {}
       end
 
-      # Internal: To be used by CircuitBreaker to either get an instance for a key
-      # or set a new instance for a key.
+      # Internal: To be used by CircuitBreaker to either get an instance for a
+      # key or set a new instance for a key.
       #
       # Raises KeyError if key not found and no block provided.
       def fetch(key, &block)
