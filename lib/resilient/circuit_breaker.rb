@@ -5,25 +5,19 @@ require "resilient/circuit_breaker/registry"
 
 module Resilient
   class CircuitBreaker
-    # Public: Resets all registered circuit breakers (and thus there state/metrics).
+    # Public: Resets all registered circuit breakers (and thus their state/metrics).
     # Useful for ensuring a clean environment between tests.
     def self.reset
-      registry.reset
+      Registry.default.reset
     end
 
-    # Private: Registry that stores instances of circuit breakers to ensure that
-    # attempts to create new instances with the same key retain existing state/metrics.
-    def self.registry
-      @registry ||= Registry.new
-    end
-    class << self; private :registry; end
-
-    # Public: Overriden method to return instance of circuit breaker based on
-    # key. If key does not exist, it is registered. If key does exist, it
-    # returns registered instance instead of allocating a new instance in order
-    # to ensure that state/metrics are the same per key.
-    def self.for(key: nil, open: false, properties: nil, metrics: nil)
-      registry.fetch(key) {
+    # Public: Returns an instance of circuit breaker based on key and registry.
+    # Default registry is used if none is provided. If key does not exist, it is
+    # registered. If key does exist, it returns registered instance instead of
+    # allocating a new instance in order to ensure that state/metrics are the
+    # same per key.
+    def self.for(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+      (registry || Registry.default).fetch(key) {
         new(key: key, open: open, properties: properties, metrics: metrics)
       }
     end
