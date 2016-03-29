@@ -6,21 +6,21 @@ module Resilient
   class CircuitBreakerTest < Test
     def setup
       super
-      @object = CircuitBreaker.get_instance(key: Resilient::Key.new("object"))
+      @object = CircuitBreaker.get(key: Resilient::Key.new("object"))
     end
 
     include Test::CircuitBreakerInterface
 
     def test_for
-      first_initialization = CircuitBreaker.get_instance(key: Resilient::Key.new("longmire"))
+      first_initialization = CircuitBreaker.get(key: Resilient::Key.new("longmire"))
       assert_instance_of CircuitBreaker, first_initialization
 
-      second_initialization = CircuitBreaker.get_instance(key: Resilient::Key.new("longmire"))
+      second_initialization = CircuitBreaker.get(key: Resilient::Key.new("longmire"))
       assert_instance_of CircuitBreaker, second_initialization
       assert first_initialization.equal?(second_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{second_initialization.inspect}"
 
-      symbol_initialization = CircuitBreaker.get_instance(key: Resilient::Key.new(:longmire))
+      symbol_initialization = CircuitBreaker.get(key: Resilient::Key.new(:longmire))
       assert_instance_of CircuitBreaker, symbol_initialization
       assert first_initialization.equal?(symbol_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
@@ -28,17 +28,17 @@ module Resilient
 
     def test_for_with_nil_key
       assert_raises ArgumentError do
-        CircuitBreaker.get_instance(key: nil)
+        CircuitBreaker.get(key: nil)
       end
     end
 
     def test_for_with_different_properties_than_initially_provided
       key = Resilient::Key.new("longmire")
       original_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 10)
-      circuit_breaker = CircuitBreaker.get_instance(key: key, properties: original_properties)
+      circuit_breaker = CircuitBreaker.get(key: key, properties: original_properties)
 
       different_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 15)
-      different_properties_circuit_breaker = CircuitBreaker.get_instance(key: key, properties: different_properties)
+      different_properties_circuit_breaker = CircuitBreaker.get(key: key, properties: different_properties)
 
       assert_equal original_properties.error_threshold_percentage,
         different_properties_circuit_breaker.properties.error_threshold_percentage
@@ -58,7 +58,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 51,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -70,7 +70,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 49,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -82,7 +82,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new(default_test_properties_options({
         error_threshold_percentage: 50,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -94,7 +94,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new(default_test_properties_options({
         request_volume_threshold: 5,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       4.times { circuit_breaker.metrics.failure }
 
       assert circuit_breaker.allow_request?,
@@ -107,7 +107,7 @@ module Resilient
         error_threshold_percentage: 49,
         sleep_window_seconds: 5,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -145,7 +145,7 @@ module Resilient
         error_threshold_percentage: 51,
         force_open: true,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -159,7 +159,7 @@ module Resilient
         request_volume_threshold: 0,
         force_closed: true,
       }))
-      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       circuit_breaker.failure
 
@@ -169,7 +169,7 @@ module Resilient
 
     def test_success_when_open_does_reset_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get_instance(open: true, metrics: metrics, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(open: true, metrics: metrics, key: Resilient::Key.new("test"))
 
       metrics.expect :reset, nil
       circuit_breaker.success
@@ -178,7 +178,7 @@ module Resilient
 
     def test_success_when_not_open_calls_success_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get_instance(open: false, metrics: metrics, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(open: false, metrics: metrics, key: Resilient::Key.new("test"))
 
       metrics.expect :success, nil
       circuit_breaker.success
@@ -187,7 +187,7 @@ module Resilient
 
     def test_failure_calls_failure_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get_instance(metrics: metrics, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(metrics: metrics, key: Resilient::Key.new("test"))
 
       metrics.expect :failure, nil
       circuit_breaker.failure
@@ -196,7 +196,7 @@ module Resilient
 
     def test_reset_calls_reset_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get_instance(metrics: metrics, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(metrics: metrics, key: Resilient::Key.new("test"))
 
       metrics.expect :reset, nil
       circuit_breaker.reset
@@ -204,14 +204,14 @@ module Resilient
     end
 
     def test_reset_sets_open_to_false
-      circuit_breaker = CircuitBreaker.get_instance(key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(key: Resilient::Key.new("test"))
       circuit_breaker.reset
 
       assert_equal false, circuit_breaker.open
     end
 
     def test_reset_sets_opened_or_last_checked_at_epoch_to_zero
-      circuit_breaker = CircuitBreaker.get_instance(key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get(key: Resilient::Key.new("test"))
       circuit_breaker.reset
 
       assert_equal 0, circuit_breaker.opened_or_last_checked_at_epoch

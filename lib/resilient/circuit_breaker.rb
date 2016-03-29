@@ -6,7 +6,8 @@ require "resilient/circuit_breaker/registry"
 module Resilient
   class CircuitBreaker
     # Public: Resets all registered circuit breakers (and thus their state/metrics).
-    # Useful for ensuring a clean environment between tests.
+    # Useful for ensuring a clean environment between tests. If you are using a
+    # registry other than the default, you will need to handle resets on your own.
     def self.reset
       Registry.default.reset
     end
@@ -16,7 +17,7 @@ module Resilient
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
-    def self.get_instance(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+    def self.get(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
       (registry || Registry.default).fetch(key) {
         new(key: key, open: open, properties: properties, metrics: metrics)
       }

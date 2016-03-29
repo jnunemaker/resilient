@@ -13,8 +13,8 @@ require "pp"
 require "resilient/circuit_breaker"
 
 key = Resilient::Key.new("example")
-instance = Resilient::CircuitBreaker.get_instance(key: key)
-instance_using_for = Resilient::CircuitBreaker.get_instance(key: key)
+instance = Resilient::CircuitBreaker.get(key: key)
+instance_using_for = Resilient::CircuitBreaker.get(key: key)
 instance_using_new = Resilient::CircuitBreaker.new(key: key)
 
 puts "instance equals instance_using_for: #{instance.equal?(instance_using_for)}"
