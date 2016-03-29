@@ -18,6 +18,7 @@ module Resilient
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
     def self.get(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+      key = Key.wrap(key) unless key.nil?
       (registry || Registry.default).fetch(key) {
         new(key: key, open: open, properties: properties, metrics: metrics)
       }
@@ -38,7 +39,8 @@ module Resilient
     def initialize(key: nil, open: false, properties: nil, metrics: nil)
       # ruby 2.0 does not support required keyword arguments, this gets around that
       raise ArgumentError, "key argument is required" if key.nil?
-      @key = key
+
+      @key = Key.wrap(key)
       @open = open
       @opened_or_last_checked_at_epoch = 0
 

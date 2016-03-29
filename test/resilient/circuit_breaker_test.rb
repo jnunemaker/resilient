@@ -24,6 +24,11 @@ module Resilient
       assert_instance_of CircuitBreaker, symbol_initialization
       assert first_initialization.equal?(symbol_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
+
+      string_initialization = CircuitBreaker.get(key: "longmire")
+      assert_instance_of CircuitBreaker, string_initialization
+      assert first_initialization.equal?(string_initialization),
+        "#{first_initialization.inspect} is not the exact same object as #{string_initialization.inspect}"
     end
 
     def test_get_with_nil_key

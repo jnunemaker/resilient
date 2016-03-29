@@ -4,6 +4,19 @@ require "resilient/test/circuit_breaker_interface"
 
 module Resilient
   class KeyTest < Test
+    def test_wrap_with_string
+      key = Key.wrap("test")
+      assert_instance_of Key, key
+      assert_equal "test", key.name
+    end
+
+    def test_wrap_with_instance
+      original_key = Key.new("test")
+      key = Key.wrap(original_key)
+      assert_instance_of Key, key
+      assert original_key.equal?(key)
+    end
+
     def test_initialize_with_string
       key = Key.new("test")
       assert_equal "test", key.name
