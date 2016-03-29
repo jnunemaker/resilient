@@ -10,7 +10,7 @@ module Resilient
         window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       70.times { circuit_breaker.success }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
@@ -35,7 +35,7 @@ module Resilient
         window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       18.times { circuit_breaker.failure }
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
@@ -51,7 +51,7 @@ module Resilient
         request_volume_threshold: 0,
         force_open: true,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
@@ -66,7 +66,7 @@ module Resilient
         request_volume_threshold: 0,
         force_closed: true,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       assert circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
 
@@ -81,7 +81,7 @@ module Resilient
         force_closed: true,
         force_open: true,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       refute circuit_breaker.allow_request?,
         debug_circuit_breaker(circuit_breaker)
     end
@@ -93,7 +93,7 @@ module Resilient
         window_size_in_seconds: 60,
         bucket_size_in_seconds: 10,
       })
-      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.get_instance(properties: properties, key: Resilient::Key.new("test"))
       now = Time.now
       bucket1 = now
       bucket2 = now + 10

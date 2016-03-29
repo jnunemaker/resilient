@@ -16,7 +16,7 @@ module Resilient
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
-    def self.for(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+    def self.get_instance(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
       (registry || Registry.default).fetch(key) {
         new(key: key, open: open, properties: properties, metrics: metrics)
       }

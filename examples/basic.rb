@@ -13,7 +13,7 @@ properties = Resilient::CircuitBreaker::Properties.new({
   request_volume_threshold: 10,
   error_threshold_percentage: 25,
 })
-circuit_breaker = Resilient::CircuitBreaker.for(key: Resilient::Key.new("example"), properties: properties)
+circuit_breaker = Resilient::CircuitBreaker.get_instance(key: Resilient::Key.new("example"), properties: properties)
 
 # success
 if circuit_breaker.allow_request?
