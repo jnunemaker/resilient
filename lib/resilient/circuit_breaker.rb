@@ -22,9 +22,9 @@ module Resilient
     # key. If key does not exist, it is registered. If key does exist, it
     # returns registered instance instead of allocating a new instance in order
     # to ensure that state/metrics are the same per key.
-    def self.new(key: nil, open: false, properties: nil, metrics: nil)
+    def self.for(key: nil, open: false, properties: nil, metrics: nil)
       registry.fetch(key) {
-        super(key: key, open: open, properties: properties, metrics: metrics)
+        new(key: key, open: open, properties: properties, metrics: metrics)
       }
     end
 

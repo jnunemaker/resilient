@@ -11,16 +11,16 @@ module Resilient
 
     include Test::CircuitBreakerInterface
 
-    def test_new
-      first_initialization = CircuitBreaker.new(key: Resilient::Key.new("longmire"))
+    def test_for
+      first_initialization = CircuitBreaker.for(key: Resilient::Key.new("longmire"))
       assert_instance_of CircuitBreaker, first_initialization
 
-      second_initialization = CircuitBreaker.new(key: Resilient::Key.new("longmire"))
+      second_initialization = CircuitBreaker.for(key: Resilient::Key.new("longmire"))
       assert_instance_of CircuitBreaker, second_initialization
       assert first_initialization.equal?(second_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{second_initialization.inspect}"
 
-      symbol_initialization = CircuitBreaker.new(key: Resilient::Key.new(:longmire))
+      symbol_initialization = CircuitBreaker.for(key: Resilient::Key.new(:longmire))
       assert_instance_of CircuitBreaker, symbol_initialization
       assert first_initialization.equal?(symbol_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
