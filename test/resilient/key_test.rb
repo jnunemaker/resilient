@@ -17,6 +17,12 @@ module Resilient
       assert original_key.equal?(key)
     end
 
+    def test_wrap_with_unsupported_type
+      assert_raises TypeError do
+        Key.wrap(Object.new)
+      end
+    end
+
     def test_initialize_with_string
       key = Key.new("test")
       assert_equal "test", key.name

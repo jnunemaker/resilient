@@ -7,10 +7,13 @@ module Resilient
       # Internal: Takes a string name or instance of a Key and always returns a
       # Key instance.
       def self.wrap(hash_or_instance)
-        if hash_or_instance.is_a?(self)
+        case hash_or_instance
+        when self
           hash_or_instance
-        else
+        when Hash
           new(hash_or_instance)
+        else
+          raise TypeError, "properties must be Hash or Resilient::Properties instance"
         end
       end
 
