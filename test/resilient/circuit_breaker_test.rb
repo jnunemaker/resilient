@@ -11,7 +11,7 @@ module Resilient
 
     include Test::CircuitBreakerInterface
 
-    def test_for
+    def test_get
       first_initialization = CircuitBreaker.get(key: Resilient::Key.new("longmire"))
       assert_instance_of CircuitBreaker, first_initialization
 
@@ -26,13 +26,13 @@ module Resilient
         "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
     end
 
-    def test_for_with_nil_key
+    def test_get_with_nil_key
       assert_raises ArgumentError do
         CircuitBreaker.get(key: nil)
       end
     end
 
-    def test_for_with_different_properties_than_initially_provided
+    def test_get_with_different_properties_than_initially_provided
       key = Resilient::Key.new("longmire")
       original_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 10)
       circuit_breaker = CircuitBreaker.get(key: key, properties: original_properties)
