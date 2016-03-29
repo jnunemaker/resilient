@@ -86,6 +86,16 @@ circuit_breaker = Resilient::CircuitBreaker.for(metrics: metrics, key: Resilient
 # etc etc etc
 ```
 
+## Tests
+
+To ensure that you have a clean circuit for each test case, be sure to run the following in the setup for your tests either before every test case or at a minimum each test case that uses circuit breakers.
+
+```ruby
+Resilient::CircuitBreaker.reset
+```
+
+This resets the global registry of circuits by key which effectively resets all state and metrics for the circuits.
+
 ## Development
 
 ```bash

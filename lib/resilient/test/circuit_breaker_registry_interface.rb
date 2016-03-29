@@ -20,14 +20,22 @@ module Resilient
       end
 
       def test_reset
+        bar_value = Minitest::Mock.new
+        wick_value = Minitest::Mock.new
+        bar_value.expect :reset, nil, []
+        wick_value.expect :reset, nil, []
+
+        @object.fetch("foo") { bar_value }
+        @object.fetch("baz") { wick_value }
+
         assert_nil @object.reset
 
-        @object.fetch("foo") { "bar" }
-        @object.fetch("baz") { "wick" }
+        bar_value.verify
+        wick_value.verify
+      end
 
+      def test_reset_empty_registry
         assert_nil @object.reset
-        assert_raises(KeyError) { @object.fetch("foo") }
-        assert_raises(KeyError) { @object.fetch("baz") }
       end
     end
   end

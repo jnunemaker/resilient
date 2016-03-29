@@ -38,7 +38,7 @@ module Resilient
       # breakers, which should only really be used for cleaning up in
       # test environment.
       def reset
-        @source.clear
+        @source.each_value(&:reset)
         nil
       end
     end
