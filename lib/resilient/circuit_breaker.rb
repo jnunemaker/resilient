@@ -17,10 +17,10 @@ module Resilient
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
-    def self.get(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+    def self.get(key: nil, properties: nil, metrics: nil, registry: nil)
       key = Key.wrap(key) unless key.nil?
       (registry || Registry.default).fetch(key) {
-        new(key: key, open: open, properties: properties, metrics: metrics)
+        new(key: key, properties: properties, metrics: metrics)
       }
     end
 
@@ -36,12 +36,12 @@ module Resilient
     attr_reader :metrics
     attr_reader :properties
 
-    def initialize(key: nil, open: false, properties: nil, metrics: nil)
+    def initialize(key: nil, properties: nil, metrics: nil)
       # ruby 2.0 does not support required keyword arguments, this gets around that
       raise ArgumentError, "key argument is required" if key.nil?
 
       @key = Key.wrap(key)
-      @open = open
+      @open = false
       @opened_or_last_checked_at_epoch = 0
 
       @properties = if properties
