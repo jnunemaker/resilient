@@ -26,6 +26,24 @@ module Resilient
         "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
     end
 
+    def test_for_with_nil_key
+      assert_raises ArgumentError do
+        CircuitBreaker.for(key: nil)
+      end
+    end
+
+    def test_for_with_different_properties_than_initially_provided
+      key = Resilient::Key.new("longmire")
+      original_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 10)
+      circuit_breaker = CircuitBreaker.for(key: key, properties: original_properties)
+
+      different_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 15)
+      different_properties_circuit_breaker = CircuitBreaker.for(key: key, properties: different_properties)
+
+      assert_equal original_properties.error_threshold_percentage,
+        different_properties_circuit_breaker.properties.error_threshold_percentage
+    end
+
     def test_new
       assert_raises NoMethodError do
         CircuitBreaker.new(key: Resilient::Key.new("test"))
