@@ -23,8 +23,9 @@ module Resilient
     end
 
     def test_initialize_with_symbol
-      key = Key.new(:test)
-      assert_equal "test", key.name
+      assert_raises TypeError do
+        Key.new(:test)
+      end
     end
 
     def test_hash

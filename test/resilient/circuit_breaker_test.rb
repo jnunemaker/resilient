@@ -20,11 +20,6 @@ module Resilient
       assert first_initialization.equal?(second_initialization),
         "#{first_initialization.inspect} is not the exact same object as #{second_initialization.inspect}"
 
-      symbol_initialization = CircuitBreaker.get(key: Resilient::Key.new(:longmire))
-      assert_instance_of CircuitBreaker, symbol_initialization
-      assert first_initialization.equal?(symbol_initialization),
-        "#{first_initialization.inspect} is not the exact same object as #{symbol_initialization.inspect}"
-
       string_initialization = CircuitBreaker.get(key: "longmire")
       assert_instance_of CircuitBreaker, string_initialization
       assert first_initialization.equal?(string_initialization),

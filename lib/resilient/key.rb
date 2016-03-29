@@ -14,7 +14,8 @@ module Resilient
     attr_reader :name
 
     def initialize(name)
-      @name = name.to_s
+      raise TypeError, "name must be a String" unless name.is_a?(String)
+      @name = name
     end
 
     def ==(other)
