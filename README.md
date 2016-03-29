@@ -25,7 +25,11 @@ Or install it yourself as:
 ```ruby
 require "resilient/circuit_breaker"
 
-# default properties for circuit
+# default properties for circuit, CircuitBreaker.for is used instead of
+# CircuitBreaker.new as for keeps a registry of circuits by key to prevent
+# creating multiple instances of the same circuit breaker for a key; not using
+# `for` means you would have multiple instances of the circuit breaker and thus
+# separate state and metrics
 circuit_breaker = Resilient::CircuitBreaker.for(key: Resilient::Key.new("example"))
 if circuit_breaker.allow_request?
   begin
