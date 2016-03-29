@@ -14,10 +14,10 @@ require "resilient/circuit_breaker"
 
 key = Resilient::Key.new("example")
 instance = Resilient::CircuitBreaker.get(key: key)
-instance_using_for = Resilient::CircuitBreaker.get(key: key)
+instance_using_get = Resilient::CircuitBreaker.get(key: key)
 instance_using_new = Resilient::CircuitBreaker.new(key: key)
 
-puts "instance equals instance_using_for: #{instance.equal?(instance_using_for)}"
+puts "instance equals instance_using_get: #{instance.equal?(instance_using_get)}"
 puts "instance equals instance_using_new: #{instance.equal?(instance_using_new)}"
 
 instance.properties.request_volume_threshold.times do
@@ -25,7 +25,7 @@ instance.properties.request_volume_threshold.times do
 end
 
 puts "instance allow_request?: #{instance.allow_request?}"
-puts "instance_using_for allow_request?: #{instance_using_for.allow_request?}"
+puts "instance_using_get allow_request?: #{instance_using_get.allow_request?}"
 
 # this instance allows the request because it isn't sharing internal state and
 # metrics due to being a new allocated instance; the for instance does not
@@ -34,8 +34,8 @@ puts "instance_using_for allow_request?: #{instance_using_for.allow_request?}"
 # the registry
 puts "instance_using_new allow_request?: #{instance_using_new.allow_request?}"
 
-# instance equals instance_using_for: true
+# instance equals instance_using_get: true
 # instance equals instance_using_new: false
 # instance allow_request?: false
-# instance_using_for allow_request?: false
+# instance_using_get allow_request?: false
 # instance_using_new allow_request?: true
