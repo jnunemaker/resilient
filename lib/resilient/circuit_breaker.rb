@@ -22,6 +22,12 @@ module Resilient
       }
     end
 
+    unless ENV.key?("RESILIENT_PUBLICIZE_NEW")
+      class << self
+        private :new
+      end
+    end
+
     attr_reader :key
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch

@@ -1,5 +1,6 @@
 require "test_helper"
 require "resilient/circuit_breaker"
+require "resilient/instrumenters/memory"
 require "resilient/circuit_breaker/properties"
 require "resilient/circuit_breaker/metrics/storage/memory"
 
@@ -10,7 +11,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       assert circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event| event.name =~ /allow_request/ }
       refute_nil event
@@ -34,7 +35,7 @@ module Resilient
         instrumenter: instrumenter,
         force_open: true,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       refute circuit_breaker.allow_request?
       event = instrumenter.events.first
       refute_nil event
@@ -53,7 +54,7 @@ module Resilient
         instrumenter: instrumenter,
         force_closed: true,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       assert circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event| event.name =~ /allow_request/ }
       refute_nil event
@@ -78,7 +79,7 @@ module Resilient
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       assert circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -111,7 +112,7 @@ module Resilient
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       assert circuit_breaker.allow_request?
 
@@ -148,7 +149,8 @@ module Resilient
         error_threshold_percentage: 50,
         request_volume_threshold: 0,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker.properties.instrumenter.reset
       circuit_breaker.failure
       refute circuit_breaker.allow_request?
       event = instrumenter.events.detect { |event|
@@ -180,7 +182,7 @@ module Resilient
         request_volume_threshold: 0,
         sleep_window_seconds: 1,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       refute circuit_breaker.allow_request?
 
@@ -215,7 +217,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: false, properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(open: false, properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       event = instrumenter.events.first
       refute_nil event
@@ -229,7 +231,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(open: true, properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(open: true, properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.success
       event = instrumenter.events.first
       refute_nil event
@@ -243,7 +245,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.failure
       event = instrumenter.events.first
       refute_nil event
@@ -256,7 +258,7 @@ module Resilient
       properties = CircuitBreaker::Properties.new({
         instrumenter: instrumenter,
       })
-      circuit_breaker = CircuitBreaker.new(properties: properties, key: Resilient::Key.new("test"))
+      circuit_breaker = CircuitBreaker.for(properties: properties, key: Resilient::Key.new("test"))
       circuit_breaker.reset
       event = instrumenter.events.first
       refute_nil event

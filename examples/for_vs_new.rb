@@ -4,6 +4,10 @@ root_path = Pathname(__FILE__).dirname.join("..").expand_path
 lib_path  = root_path.join("lib")
 $:.unshift(lib_path)
 
+# by default new is private so people don't use it, this makes it possible to
+# use it as resilient checks for this env var prior to privatizing new
+ENV["RESILIENT_PUBLICIZE_NEW"] = "1"
+
 # requiring stuff for this example
 require "pp"
 require "resilient/circuit_breaker"

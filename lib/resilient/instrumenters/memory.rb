@@ -8,7 +8,7 @@ module Resilient
       attr_reader :events
 
       def initialize
-        @events = []
+        reset
       end
 
       def instrument(name, payload = {})
@@ -24,6 +24,10 @@ module Resilient
         end
         @events << Event.new(name, payload, result)
         result
+      end
+
+      def reset
+        @events = []
       end
     end
   end
