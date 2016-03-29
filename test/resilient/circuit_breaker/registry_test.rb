@@ -11,6 +11,15 @@ module Resilient
       end
 
       include Test::CircuitBreakerRegistryInterface
+
+      def test_default_class_accessors
+        original_default = Registry.default
+        assert_instance_of Registry, Registry.default
+        Registry.default = @object
+        assert_equal @object, Registry.default
+      ensure
+        Registry.default = original_default
+      end
     end
   end
 end

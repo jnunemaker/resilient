@@ -1,9 +1,22 @@
 module Resilient
   class CircuitBreaker
     class Registry
+      # Internal: Default registry to use for circuit breakers.
+      def self.default
+        @default
+      end
+
+      # Internal: Allows overriding default registry for circuit breakers.
+      def self.default=(value)
+        @default = value
+      end
+
       def initialize(source = nil)
         @source = source || {}
       end
+
+      # Setup default to new instance.
+      @default = new
 
       # Internal: To be used by CircuitBreaker to either get an instance for a
       # key or set a new instance for a key.
