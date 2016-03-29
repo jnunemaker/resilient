@@ -3,6 +3,17 @@ require "resilient/instrumenters/noop"
 module Resilient
   class CircuitBreaker
     class Properties
+
+      # Internal: Takes a string name or instance of a Key and always returns a
+      # Key instance.
+      def self.wrap(hash_or_instance)
+        if hash_or_instance.is_a?(self)
+          hash_or_instance
+        else
+          new(hash_or_instance)
+        end
+      end
+
       # allows forcing the circuit open (stopping all requests)
       attr_reader :force_open
 

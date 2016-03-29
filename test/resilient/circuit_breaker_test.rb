@@ -32,6 +32,18 @@ module Resilient
       end
     end
 
+    def test_get_with_properties_hash
+      circuit_breaker = CircuitBreaker.get(key: "test", properties: {error_threshold_percentage: 51})
+      assert_instance_of CircuitBreaker::Properties, circuit_breaker.properties
+      assert_equal 51, circuit_breaker.properties.error_threshold_percentage
+    end
+
+    def test_get_with_properties_instance
+      circuit_breaker = CircuitBreaker.get(key: "test", properties: CircuitBreaker::Properties.new({error_threshold_percentage: 51}))
+      assert_instance_of CircuitBreaker::Properties, circuit_breaker.properties
+      assert_equal 51, circuit_breaker.properties.error_threshold_percentage
+    end
+
     def test_get_with_different_properties_than_initially_provided
       key = Resilient::Key.new("longmire")
       original_properties = CircuitBreaker::Properties.new(error_threshold_percentage: 10)

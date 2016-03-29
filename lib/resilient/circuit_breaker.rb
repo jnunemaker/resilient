@@ -45,7 +45,7 @@ module Resilient
       @opened_or_last_checked_at_epoch = 0
 
       @properties = if properties
-        properties
+        Properties.wrap(properties)
       else
         Properties.new
       end
