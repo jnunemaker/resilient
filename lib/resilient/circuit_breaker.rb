@@ -1,9 +1,34 @@
 require "resilient/key"
 require "resilient/circuit_breaker/metrics"
 require "resilient/circuit_breaker/properties"
+require "resilient/circuit_breaker/registry"
 
 module Resilient
   class CircuitBreaker
+    # Public: Resets all registered circuit breakers (and thus their state/metrics).
+    # Useful for ensuring a clean environment between tests. If you are using a
+    # registry other than the default, you will need to handle resets on your own.
+    def self.reset
+      Registry.default.reset
+    end
+
+    # Public: Returns an instance of circuit breaker based on key and registry.
+    # Default registry is used if none is provided. If key does not exist, it is
+    # registered. If key does exist, it returns registered instance instead of
+    # allocating a new instance in order to ensure that state/metrics are the
+    # same per key.
+    def self.get(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+      (registry || Registry.default).fetch(key) {
+        new(key: key, open: open, properties: properties, metrics: metrics)
+      }
+    end
+
+    unless ENV.key?("RESILIENT_PUBLICIZE_NEW")
+      class << self
+        private :new
+      end
+    end
+
     attr_reader :key
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch

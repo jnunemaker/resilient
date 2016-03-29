@@ -4,6 +4,13 @@ require "pathname"
 
 module Resilient
   class Test < Minitest::Test
+    def setup
+      # Fully wipe out all circuit breakers before every test since all of these
+      # circuits are temporary. You don't want to do this in your test suite.
+      # Use CircuitBreaker.reset as directed in the readme.
+      CircuitBreaker::Registry.default = CircuitBreaker::Registry.new
+    end
+
     def debug_metrics(metrics, indent: "")
       keys = [:success, :failure]
       result = Hash.new { |h, k| h[k] = Hash.new(0) }

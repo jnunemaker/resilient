@@ -6,8 +6,9 @@ module Resilient
   class CircuitBreaker
     class Metrics
       module Storage
-        class MemoryTest < Resilient::Test
+        class MemoryTest < Test
           def setup
+            super
             @object = Memory.new
           end
 

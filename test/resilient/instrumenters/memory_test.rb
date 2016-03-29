@@ -3,7 +3,7 @@ require "resilient/instrumenters/memory"
 
 module Resilient
   module Instrumenters
-    class MemoryTest < Resilient::Test
+    class MemoryTest < Test
       def test_initialize
         instrumenter = Memory.new
         assert_equal [], instrumenter.events
