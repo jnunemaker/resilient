@@ -1,6 +1,6 @@
 # Resilient
 
-Some tools to aid in resiliency in ruby. For now, just a circuit breaker (~~stolen from~~ based on [hystrix](https://github.com/netflix/hystrix)). Soon much more...
+Some tools to aid in resiliency in Ruby. For now, just a circuit breaker (~~stolen from~~ based on [hystrix](https://github.com/netflix/hystrix)). Soon much more...
 
 Nothing asynchronous or thread safe yet either, but open to it and would like to see more around it in the future.
 
@@ -26,10 +26,10 @@ Or install it yourself as:
 require "resilient/circuit_breaker"
 
 # default properties for circuit, CircuitBreaker.get is used instead of
-# CircuitBreaker.new as for keeps a registry of circuits by key to prevent
+# CircuitBreaker.new as `get` keeps a registry of circuits by key to prevent
 # creating multiple instances of the same circuit breaker for a key; not using
-# `for` means you would have multiple instances of the circuit breaker and thus
-# separate state and metrics; you can read more in examples/for_vs_new.rb
+# `get` means you would have multiple instances of the circuit breaker and thus
+# separate state and metrics; you can read more in examples/get_vs_new.rb
 circuit_breaker = Resilient::CircuitBreaker.get(key: Resilient::Key.new("example"))
 if circuit_breaker.allow_request?
   begin
