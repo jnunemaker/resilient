@@ -17,6 +17,8 @@ module Resilient
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
+    #
+    #  See #initialize for docs on key, properties and metrics.
     def self.get(key: nil, properties: nil, metrics: nil, registry: nil)
       key = Key.wrap(key) unless key.nil?
       (registry || Registry.default).fetch(key) {
@@ -37,6 +39,20 @@ module Resilient
     attr_reader :metrics
     attr_reader :properties
 
+    # Private: Builds new instance of a CircuitBreaker.
+    #
+    #  key - The String or Resilient::Key that determines uniqueness of the
+    #        circuit breaker in the registry and for instrumentation.
+    #
+    #  properties - The Hash or Resilient::CircuitBreaker::Properties that determine how the
+    #               circuit breaker should behave. Optional. Defaults to new
+    #               Resilient::CircuitBreaker::Properties instance.
+    #
+    #  metrics - The object that stores successes and failures. Optional.
+    #            Defaults to new Resilient::CircuitBreaker::Metrics instance
+    #            based on window size and bucket size properties.
+    #
+    # Returns CircuitBreaker instance.
     def initialize(key: nil, properties: nil, metrics: nil)
       # ruby 2.0 does not support required keyword arguments, this gets around that
       raise ArgumentError, "key argument is required" if key.nil?
