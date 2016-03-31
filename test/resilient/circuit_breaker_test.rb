@@ -62,6 +62,12 @@ module Resilient
       end
     end
 
+    def test_allocate
+      assert_raises NoMethodError do
+        CircuitBreaker.allocate
+      end
+    end
+
     def test_key
       assert_equal "object", @object.key.name
     end

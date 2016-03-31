@@ -27,6 +27,7 @@ module Resilient
     unless ENV.key?("RESILIENT_PUBLICIZE_NEW")
       class << self
         private :new
+        private :allocate
       end
     end
 
