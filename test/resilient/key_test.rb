@@ -17,6 +17,10 @@ module Resilient
       assert original_key.equal?(key)
     end
 
+    def test_wrap_with_nil
+      assert_nil Key.wrap(nil)
+    end
+
     def test_wrap_with_unsupported_type
       assert_raises TypeError do
         Key.wrap(Object.new)

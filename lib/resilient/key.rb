@@ -5,7 +5,7 @@ module Resilient
     # Key instance.
     def self.wrap(string_or_instance)
       case string_or_instance
-      when self
+      when self, NilClass
         string_or_instance
       else
         new(string_or_instance)

@@ -20,7 +20,7 @@ module Resilient
     #
     #  See #initialize for docs on key, properties and metrics.
     def self.get(key: nil, properties: nil, metrics: nil, registry: nil)
-      key = Key.wrap(key) unless key.nil?
+      key = Key.wrap(key)
       (registry || Registry.default).fetch(key) {
         new(key: key, properties: properties, metrics: metrics)
       }
