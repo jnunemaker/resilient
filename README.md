@@ -29,8 +29,8 @@ require "resilient/circuit_breaker"
 # CircuitBreaker.new as `get` keeps a registry of circuits by key to prevent
 # creating multiple instances of the same circuit breaker for a key; not using
 # `get` means you would have multiple instances of the circuit breaker and thus
-# separate state and metrics; you can read more in examples/get_vs_new.rb
-circuit_breaker = Resilient::CircuitBreaker.get(key: Resilient::Key.new("example"))
+# separate state and metrics; you can read more in examples/for_vs_new.rb
+circuit_breaker = Resilient::CircuitBreaker.get("example")
 if circuit_breaker.allow_request?
   begin
     # do something expensive
@@ -47,7 +47,7 @@ end
 customize properties of circuit:
 
 ```ruby
-properties = Resilient::CircuitBreaker::Properties.new({
+circuit_breaker = Resilient::CircuitBreaker.get("example", {
   # at what percentage of errors should we open the circuit
   error_threshold_percentage: 50,
   # do not try request again for 5 seconds
@@ -55,34 +55,30 @@ properties = Resilient::CircuitBreaker::Properties.new({
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 
 force the circuit to be always open:
 
 ```ruby
-properties = Resilient::CircuitBreaker::Properties.new(force_open: true)
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", force_open: true)
 # etc etc etc
 ```
 
 force the circuit to be always closed (great way to test in production with no impact, all instrumentation still runs which means you can measure in production with config and gain confidence while never actually opening a circuit incorrectly):
 
 ```ruby
-properties = Resilient::CircuitBreaker::Properties.new(force_closed: true)
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", force_closed: true)
 # etc etc etc
 ```
 
 customize rolling window to be 10 buckets of 1 second each (10 seconds in all):
 
 ```ruby
-metrics = Resilient::CircuitBreaker::Metrics.new({
+circuit_breaker = Resilient::CircuitBreaker.get("example", {
   window_size_in_seconds: 10,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resilient::CircuitBreaker.get(metrics: metrics, key: Resilient::Key.new("example"))
 # etc etc etc
 ```
 
