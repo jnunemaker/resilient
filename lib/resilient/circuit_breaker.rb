@@ -19,10 +19,10 @@ module Resilient
     # same per key.
     #
     #  See #initialize for docs on key, properties and metrics.
-    def self.get(key: nil, properties: nil, metrics: nil, registry: nil)
+    def self.get(key, properties: nil, metrics: nil, registry: nil)
       key = Key.wrap(key)
       (registry || Registry.default).fetch(key) {
-        new(key: key, properties: properties, metrics: metrics)
+        new(key, properties: properties, metrics: metrics)
       }
     end
 
@@ -53,8 +53,7 @@ module Resilient
     #            based on window size and bucket size properties.
     #
     # Returns CircuitBreaker instance.
-    def initialize(key: nil, properties: nil, metrics: nil)
-      # ruby 2.0 does not support required keyword arguments, this gets around that
+    def initialize(key, properties: nil, metrics: nil)
       raise ArgumentError, "key argument is required" if key.nil?
 
       @key = Key.wrap(key)

@@ -30,7 +30,7 @@ require "resilient/circuit_breaker"
 # creating multiple instances of the same circuit breaker for a key; not using
 # `for` means you would have multiple instances of the circuit breaker and thus
 # separate state and metrics; you can read more in examples/for_vs_new.rb
-circuit_breaker = Resilient::CircuitBreaker.get(key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example")
 if circuit_breaker.allow_request?
   begin
     # do something expensive
@@ -55,7 +55,7 @@ properties = Resilient::CircuitBreaker::Properties.new({
   # do not open circuit until at least 5 requests have happened
   request_volume_threshold: 5,
 })
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", properties: properties)
 # etc etc etc
 ```
 
@@ -63,7 +63,7 @@ force the circuit to be always open:
 
 ```ruby
 properties = Resilient::CircuitBreaker::Properties.new(force_open: true)
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", properties: properties)
 # etc etc etc
 ```
 
@@ -71,7 +71,7 @@ force the circuit to be always closed (great way to test in production with no i
 
 ```ruby
 properties = Resilient::CircuitBreaker::Properties.new(force_closed: true)
-circuit_breaker = Resilient::CircuitBreaker.get(properties: properties, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", properties: properties)
 # etc etc etc
 ```
 
@@ -82,7 +82,7 @@ metrics = Resilient::CircuitBreaker::Metrics.new({
   window_size_in_seconds: 10,
   bucket_size_in_seconds: 1,
 })
-circuit_breaker = Resilient::CircuitBreaker.get(metrics: metrics, key: Resilient::Key.new("example"))
+circuit_breaker = Resilient::CircuitBreaker.get("example", metrics: metrics)
 # etc etc etc
 ```
 
