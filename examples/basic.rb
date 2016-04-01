@@ -8,12 +8,11 @@ $:.unshift(lib_path)
 require "pp"
 require "resilient/circuit_breaker"
 
-properties = Resilient::CircuitBreaker::Properties.new({
+circuit_breaker = Resilient::CircuitBreaker.get("example", {
   sleep_window_seconds: 1,
   request_volume_threshold: 10,
   error_threshold_percentage: 25,
 })
-circuit_breaker = Resilient::CircuitBreaker.get("example", properties: properties)
 
 # success
 if circuit_breaker.allow_request?
