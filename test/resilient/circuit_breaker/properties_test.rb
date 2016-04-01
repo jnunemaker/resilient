@@ -129,6 +129,29 @@ module Resilient
           })
         end
       end
+
+      def test_defaults_metrics_based_on_window_and_bucket_size
+        properties = Properties.new({
+          window_size_in_seconds: 60,
+          bucket_size_in_seconds: 10,
+        })
+        assert_equal 60, properties.metrics.window_size_in_seconds
+        assert_equal 10, properties.metrics.bucket_size_in_seconds
+      end
+
+      def test_allows_overriding_metrics
+        metrics = Metrics.new({
+          window_size_in_seconds: 60,
+          bucket_size_in_seconds: 10,
+        })
+        properties = Properties.new({
+          window_size_in_seconds: 50,
+          bucket_size_in_seconds: 25,
+          metrics: metrics,
+        })
+        assert_equal 60, properties.metrics.window_size_in_seconds
+        assert_equal 10, properties.metrics.bucket_size_in_seconds
+      end
     end
   end
 end

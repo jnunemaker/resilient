@@ -47,6 +47,9 @@ module Resilient
       # size of buckets in statistical window
       attr_reader :bucket_size_in_seconds
 
+      # metrics instance used to keep track of success and failure
+      attr_reader :metrics
+
       def initialize(options = {})
         @force_open = options.fetch(:force_open, false)
         @force_closed = options.fetch(:force_closed, false)
@@ -66,6 +69,13 @@ module Resilient
             "window_size_in_seconds must be perfectly divisible by" +
             " bucket_size_in_seconds in order to evenly partition the buckets"
         end
+
+        @metrics = options.fetch(:metrics) {
+          Metrics.new({
+            window_size_in_seconds: @window_size_in_seconds,
+            bucket_size_in_seconds: @bucket_size_in_seconds,
+          })
+        }
       end
     end
   end
