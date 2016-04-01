@@ -12,6 +12,8 @@ module Resilient
           hash_or_instance
         when Hash
           new(hash_or_instance)
+        when NilClass
+          new
         else
           raise TypeError, "properties must be Hash or Resilient::Properties instance"
         end

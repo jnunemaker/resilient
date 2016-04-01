@@ -57,14 +57,9 @@ module Resilient
       raise ArgumentError, "key argument is required" if key.nil?
 
       @key = Key.wrap(key)
+      @properties = Properties.wrap(properties)
       @open = false
       @opened_or_last_checked_at_epoch = 0
-
-      @properties = if properties
-        Properties.wrap(properties)
-      else
-        Properties.new
-      end
 
       @metrics = if metrics
         metrics

@@ -27,6 +27,11 @@ module Resilient
         assert_equal original_properties.force_open, properties.force_open
       end
 
+      def test_wrap_with_nil
+        properties = Properties.wrap(nil)
+        assert_instance_of Properties, properties
+      end
+
       def test_wrap_with_unsupported_type
         assert_raises TypeError do
           Properties.wrap(Object.new)
