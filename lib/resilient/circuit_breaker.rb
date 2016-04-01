@@ -17,15 +17,19 @@ module Resilient
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
-    def self.get(key: nil, open: false, properties: nil, metrics: nil, registry: nil)
+    #
+    #  See #initialize for docs on key, properties and metrics.
+    def self.get(key, properties = nil, metrics = nil, registry = nil)
+      key = Key.wrap(key)
       (registry || Registry.default).fetch(key) {
-        new(key: key, open: open, properties: properties, metrics: metrics)
+        new(key, properties, metrics)
       }
     end
 
     unless ENV.key?("RESILIENT_PUBLICIZE_NEW")
       class << self
         private :new
+        private :allocate
       end
     end
 
@@ -35,15 +39,29 @@ module Resilient
     attr_reader :metrics
     attr_reader :properties
 
-    def initialize(key: nil, open: false, properties: nil, metrics: nil)
-      # ruby 2.0 does not support required keyword arguments, this gets around that
+    # Private: Builds new instance of a CircuitBreaker.
+    #
+    #  key - The String or Resilient::Key that determines uniqueness of the
+    #        circuit breaker in the registry and for instrumentation.
+    #
+    #  properties - The Hash or Resilient::CircuitBreaker::Properties that determine how the
+    #               circuit breaker should behave. Optional. Defaults to new
+    #               Resilient::CircuitBreaker::Properties instance.
+    #
+    #  metrics - The object that stores successes and failures. Optional.
+    #            Defaults to new Resilient::CircuitBreaker::Metrics instance
+    #            based on window size and bucket size properties.
+    #
+    # Returns CircuitBreaker instance.
+    def initialize(key, properties = nil, metrics = nil)
       raise ArgumentError, "key argument is required" if key.nil?
-      @key = key
-      @open = open
+
+      @key = Key.wrap(key)
+      @open = false
       @opened_or_last_checked_at_epoch = 0
 
       @properties = if properties
-        properties
+        Properties.wrap(properties)
       else
         Properties.new
       end

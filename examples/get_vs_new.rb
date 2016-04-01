@@ -12,10 +12,9 @@ ENV["RESILIENT_PUBLICIZE_NEW"] = "1"
 require "pp"
 require "resilient/circuit_breaker"
 
-key = Resilient::Key.new("example")
-instance = Resilient::CircuitBreaker.get(key: key)
-instance_using_get = Resilient::CircuitBreaker.get(key: key)
-instance_using_new = Resilient::CircuitBreaker.new(key: key)
+instance = Resilient::CircuitBreaker.get("example")
+instance_using_get = Resilient::CircuitBreaker.get("example")
+instance_using_new = Resilient::CircuitBreaker.new("example")
 
 puts "instance equals instance_using_get: #{instance.equal?(instance_using_get)}"
 puts "instance equals instance_using_new: #{instance.equal?(instance_using_new)}"

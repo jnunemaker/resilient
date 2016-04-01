@@ -14,6 +14,25 @@ module Resilient
 
       include Test::PropertiesInterface
 
+      def test_wrap_with_hash
+        properties = Properties.wrap(force_open: true)
+        assert_instance_of Properties, properties
+        assert properties.force_open
+      end
+
+      def test_wrap_with_instance
+        original_properties = Properties.new(force_open: true)
+        properties = Properties.wrap(original_properties)
+        assert_instance_of Properties, properties
+        assert_equal original_properties.force_open, properties.force_open
+      end
+
+      def test_wrap_with_unsupported_type
+        assert_raises TypeError do
+          Properties.wrap(Object.new)
+        end
+      end
+
       def test_defaults_force_open
         assert_equal false, @object.force_open
       end
