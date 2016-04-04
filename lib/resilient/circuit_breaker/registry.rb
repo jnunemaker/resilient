@@ -11,11 +11,19 @@ module Resilient
         @default = value
       end
 
+      # Public: Reset the default registry. This completely wipes all instances
+      # by swapping out the default registry for a new one and letting the old
+      # one get GC'd. Useful in tests to get a completely clean slate.
+      def self.reset
+        default.reset
+      end
+
       def initialize(source = nil)
         @source = source || {}
       end
 
-      # Setup default to new instance.
+      # Setup new instance as default. Needs to be after initialize so hash gets
+      # initialize correctly.
       @default = new
 
       # Internal: To be used by CircuitBreaker to either get an instance for a
@@ -38,7 +46,7 @@ module Resilient
       # breakers, which should only really be used for cleaning up in
       # test environment.
       def reset
-        @source.each_value(&:reset)
+        @source = {}
         nil
       end
     end

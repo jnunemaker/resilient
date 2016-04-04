@@ -20,18 +20,17 @@ module Resilient
       end
 
       def test_reset
-        bar_value = Minitest::Mock.new
-        wick_value = Minitest::Mock.new
-        bar_value.expect :reset, nil, []
-        wick_value.expect :reset, nil, []
-
-        @object.fetch("foo") { bar_value }
-        @object.fetch("baz") { wick_value }
+        original_foo = @object.fetch("foo") { Object.new }
+        original_bar = @object.fetch("bar") { Object.new }
 
         assert_nil @object.reset
 
-        bar_value.verify
-        wick_value.verify
+        foo = @object.fetch("foo") { Object.new }
+        bar = @object.fetch("bar") { Object.new }
+
+        # assert that the objects before and after reset are not the same object
+        refute original_foo.equal?(foo)
+        refute original_bar.equal?(bar)
       end
 
       def test_reset_empty_registry

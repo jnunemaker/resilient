@@ -5,13 +5,6 @@ require "resilient/circuit_breaker/registry"
 
 module Resilient
   class CircuitBreaker
-    # Public: Resets all registered circuit breakers (and thus their state/metrics).
-    # Useful for ensuring a clean environment between tests. If you are using a
-    # registry other than the default, you will need to handle resets on your own.
-    def self.reset
-      Registry.default.reset
-    end
-
     # Public: Returns an instance of circuit breaker based on key and registry.
     # Default registry is used if none is provided. If key does not exist, it is
     # registered. If key does exist, it returns registered instance instead of
