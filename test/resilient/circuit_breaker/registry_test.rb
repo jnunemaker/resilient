@@ -20,6 +20,12 @@ module Resilient
       ensure
         Registry.default = original_default
       end
+
+      def test_class_reset
+        Registry.default.fetch("foo") { "bar" }
+        Registry.reset
+        assert_equal "reset!", Registry.default.fetch("foo") { "reset!" }
+      end
     end
   end
 end

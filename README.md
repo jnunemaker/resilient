@@ -84,11 +84,13 @@ circuit_breaker = Resilient::CircuitBreaker.get("example", {
 
 ## Tests
 
-To ensure that you have a clean circuit for each test case, be sure to run the following in the setup for your tests (which resets each registered circuit breaker) either before every test case or at a minimum each test case that uses circuit breakers.
+To ensure that you have clean circuit breakers for each test case, be sure to run the following in the setup for your tests (which resets the default registry and thus clears all the registered circuits) either before every test case or at a minimum each test case that uses circuit breakers.
 
 ```ruby
-Resilient::CircuitBreaker.reset
+Resilient::CircuitBreaker::Registry.reset
 ```
+
+**Note**: If you use a non-default registry, you'll need to reset that on your own. If you don't know what I'm talking about, you are fine.
 
 ## Development
 
