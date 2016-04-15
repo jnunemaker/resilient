@@ -88,7 +88,7 @@ module Resilient
           payload[:closed_the_circuit] = true
           close_circuit
         else
-          @properties.metrics.success
+          metrics.success
         end
         nil
       }
@@ -96,7 +96,7 @@ module Resilient
 
     def failure
       instrument("resilient.circuit_breaker.failure", key: @key) { |payload|
-        @properties.metrics.failure
+        metrics.failure
         nil
       }
     end
@@ -105,7 +105,7 @@ module Resilient
       instrument("resilient.circuit_breaker.reset", key: @key) { |payload|
         @open = false
         @opened_or_last_checked_at_epoch = 0
-        @properties.metrics.reset
+        metrics.reset
         nil
       }
     end
@@ -120,15 +120,15 @@ module Resilient
     def close_circuit
       @open = false
       @opened_or_last_checked_at_epoch = 0
-      @properties.metrics.reset
+      metrics.reset
     end
 
     def under_request_volume_threshold?
-      @properties.metrics.requests < @properties.request_volume_threshold
+      metrics.requests < @properties.request_volume_threshold
     end
 
     def under_error_threshold_percentage?
-      @properties.metrics.error_percentage < @properties.error_threshold_percentage
+      metrics.error_percentage < @properties.error_threshold_percentage
     end
 
     def open?
