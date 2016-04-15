@@ -183,7 +183,7 @@ module Resilient
 
     def test_success_when_open_does_reset_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get("test", nil, metrics)
+      circuit_breaker = CircuitBreaker.get("test", metrics: metrics)
       circuit_breaker.instance_variable_set("@open", true)
 
       metrics.expect :reset, nil
@@ -193,7 +193,7 @@ module Resilient
 
     def test_success_when_not_open_calls_success_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get("test", nil, metrics)
+      circuit_breaker = CircuitBreaker.get("test", metrics: metrics)
 
       metrics.expect :success, nil
       circuit_breaker.success
@@ -202,7 +202,7 @@ module Resilient
 
     def test_failure_calls_failure_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get("test", nil, metrics)
+      circuit_breaker = CircuitBreaker.get("test", metrics: metrics)
 
       metrics.expect :failure, nil
       circuit_breaker.failure
@@ -211,7 +211,7 @@ module Resilient
 
     def test_reset_calls_reset_on_metrics
       metrics = Minitest::Mock.new
-      circuit_breaker = CircuitBreaker.get("test", nil, metrics)
+      circuit_breaker = CircuitBreaker.get("test", metrics: metrics)
 
       metrics.expect :reset, nil
       circuit_breaker.reset

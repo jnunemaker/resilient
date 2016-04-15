@@ -2,20 +2,23 @@ require "resilient/key"
 require "resilient/circuit_breaker/metrics"
 require "resilient/circuit_breaker/properties"
 require "resilient/circuit_breaker/registry"
+require "forwardable"
 
 module Resilient
   class CircuitBreaker
+    extend Forwardable
+
     # Public: Returns an instance of circuit breaker based on key and registry.
     # Default registry is used if none is provided. If key does not exist, it is
     # registered. If key does exist, it returns registered instance instead of
     # allocating a new instance in order to ensure that state/metrics are the
     # same per key.
     #
-    #  See #initialize for docs on key, properties and metrics.
-    def self.get(key, properties = nil, metrics = nil, registry = nil)
+    #  See #initialize for docs on key and properties.
+    def self.get(key, properties = nil, registry = nil)
       key = Key.wrap(key)
       (registry || Registry.default).fetch(key) {
-        new(key, properties, metrics)
+        new(key, properties)
       }
     end
 
@@ -26,10 +29,11 @@ module Resilient
       end
     end
 
+    def_delegator :@properties, :metrics
+
     attr_reader :key
     attr_reader :open
     attr_reader :opened_or_last_checked_at_epoch
-    attr_reader :metrics
     attr_reader :properties
 
     # Private: Builds new instance of a CircuitBreaker.
@@ -41,32 +45,14 @@ module Resilient
     #               circuit breaker should behave. Optional. Defaults to new
     #               Resilient::CircuitBreaker::Properties instance.
     #
-    #  metrics - The object that stores successes and failures. Optional.
-    #            Defaults to new Resilient::CircuitBreaker::Metrics instance
-    #            based on window size and bucket size properties.
-    #
     # Returns CircuitBreaker instance.
-    def initialize(key, properties = nil, metrics = nil)
+    def initialize(key, properties = nil)
       raise ArgumentError, "key argument is required" if key.nil?
 
       @key = Key.wrap(key)
+      @properties = Properties.wrap(properties)
       @open = false
       @opened_or_last_checked_at_epoch = 0
-
-      @properties = if properties
-        Properties.wrap(properties)
-      else
-        Properties.new
-      end
-
-      @metrics = if metrics
-        metrics
-      else
-        Metrics.new({
-          window_size_in_seconds: @properties.window_size_in_seconds,
-          bucket_size_in_seconds: @properties.bucket_size_in_seconds,
-        })
-      end
     end
 
     def allow_request?
@@ -95,7 +81,7 @@ module Resilient
           payload[:closed_the_circuit] = true
           close_circuit
         else
-          @metrics.success
+          metrics.success
         end
         nil
       }
@@ -103,7 +89,7 @@ module Resilient
 
     def failure
       instrument("resilient.circuit_breaker.failure", key: @key) { |payload|
-        @metrics.failure
+        metrics.failure
         nil
       }
     end
@@ -112,7 +98,7 @@ module Resilient
       instrument("resilient.circuit_breaker.reset", key: @key) { |payload|
         @open = false
         @opened_or_last_checked_at_epoch = 0
-        @metrics.reset
+        metrics.reset
         nil
       }
     end
@@ -127,15 +113,15 @@ module Resilient
     def close_circuit
       @open = false
       @opened_or_last_checked_at_epoch = 0
-      @metrics.reset
+      metrics.reset
     end
 
     def under_request_volume_threshold?
-      @metrics.requests < @properties.request_volume_threshold
+      metrics.requests < @properties.request_volume_threshold
     end
 
     def under_error_threshold_percentage?
-      @metrics.error_percentage < @properties.error_threshold_percentage
+      metrics.error_percentage < @properties.error_threshold_percentage
     end
 
     def open?
