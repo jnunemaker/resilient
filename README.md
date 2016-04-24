@@ -82,6 +82,20 @@ circuit_breaker = Resilient::CircuitBreaker.get("example", {
 # etc etc etc
 ```
 
+## Default Properties
+
+Property                        | Default                | Notes
+--------------------------------|------------------------|--------
+**:force_open**                 | false                  | allows forcing the circuit open (stopping all requests)
+**:force_closed**               | false                  | allows ignoring errors and therefore never trip "open" (ie. allow all traffic through); normal instrumentation will still happen, thus allowing you to "test" configuration live without impact
+**:instrumenter**               | Instrumenters::Noop    | what to use to instrument all events that happen (ie: ActiveSupport::Notifications)
+**:sleep_window_seconds**       | 5                      | seconds after tripping circuit before allowing retry
+**:request_volume_threshold**   | 20                     | number of requests that must be made within a statistical window before open/close decisions are made using stats
+**:error_threshold_percentage** | 50                     |  % of "marks" that must be failed to trip the circuit
+**:window_size_in_seconds**     | 60                     | number of seconds in the statistical window
+**:bucket_size_in_seconds**     | 10                     | size of buckets in statistical window
+**:metrics**                    | Resilient::Metrics.new | metrics instance used to keep track of success and failure
+
 ## Tests
 
 To ensure that you have clean circuit breakers for each test case, be sure to run the following in the setup for your tests (which resets the default registry and thus clears all the registered circuits) either before every test case or at a minimum each test case that uses circuit breakers.
