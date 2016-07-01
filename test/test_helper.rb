@@ -53,8 +53,7 @@ module Resilient
 now: #{Time.now.utc}
 open: #{circuit_breaker.open}
 opened_or_last_checked_at_epoch: #{circuit_breaker.opened_or_last_checked_at_epoch}
-requests: #{circuit_breaker.metrics.successes} + #{circuit_breaker.metrics.failures} = #{circuit_breaker.metrics.requests}
-error_percentage: #{circuit_breaker.metrics.error_percentage}%
+metrics: #{circuit_breaker.metrics.inspect}
 buckets:
 #{debug_metrics(circuit_breaker.metrics, indent: "  ")}
 properties:

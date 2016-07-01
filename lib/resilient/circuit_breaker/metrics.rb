@@ -30,6 +30,14 @@ module Resilient
         @buckets = []
       end
 
+      def under_request_volume_threshold?(request_volume_threshold)
+        requests < request_volume_threshold
+      end
+
+      def under_error_threshold_percentage?(error_threshold_percentage)
+        error_percentage < error_threshold_percentage
+      end
+
       def success
         @storage.increment(current_bucket, StorageSuccessKeys)
         prune_buckets
@@ -41,6 +49,13 @@ module Resilient
         prune_buckets
         nil
       end
+
+      def reset
+        @storage.prune(@buckets, StorageKeys)
+        nil
+      end
+
+      private
 
       def successes
         prune_buckets
@@ -73,13 +88,6 @@ module Resilient
 
         (failures / requests.to_f) * 100
       end
-
-      def reset
-        @storage.prune(@buckets, StorageKeys)
-        nil
-      end
-
-      private
 
       def current_bucket(timestamp = Time.now.to_i)
         bucket = @buckets.detect { |bucket| bucket.include?(timestamp) }

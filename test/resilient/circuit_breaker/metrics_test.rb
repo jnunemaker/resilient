@@ -13,33 +13,31 @@ module Resilient
       include Test::MetricsInterface
 
       def test_success
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        metrics.success
-        assert_equal 1, metrics.successes
+        @object.success
+        assert_successes @object, 1
       end
 
       def test_success_prunes
         now = Time.now
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.success
-          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+          @object.success
+          assert_equal 1, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 1) do
-          metrics.success
-          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
+          @object.success
+          assert_equal 2, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 4) do
-          metrics.success
-          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
+          @object.success
+          assert_equal 3, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 10) do
-          metrics.success
-          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+          @object.success
+          assert_equal 1, @object.buckets.length, debug_metrics(@object)
         end
       end
 
@@ -69,33 +67,31 @@ module Resilient
       end
 
       def test_failure
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        metrics.failure
-        assert_equal 1, metrics.failures
+        @object.failure
+        assert_failures @object, 1
       end
 
       def test_failure_prunes
         now = Time.now
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
 
         Timecop.freeze(now) do
-          metrics.failure
-          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+          @object.failure
+          assert_equal 1, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 1) do
-          metrics.failure
-          assert_equal 2, metrics.buckets.length, debug_metrics(metrics)
+          @object.failure
+          assert_equal 2, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 4) do
-          metrics.failure
-          assert_equal 3, metrics.buckets.length, debug_metrics(metrics)
+          @object.failure
+          assert_equal 3, @object.buckets.length, debug_metrics(@object)
         end
 
         Timecop.freeze(now + 9) do
-          metrics.failure
-          assert_equal 1, metrics.buckets.length, debug_metrics(metrics)
+          @object.failure
+          assert_equal 1, @object.buckets.length, debug_metrics(@object)
         end
       end
 
@@ -124,108 +120,85 @@ module Resilient
         end
       end
 
-      def test_successes
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        assert_equal 0, metrics.successes
+      def test_under_request_volume_threshold
+        assert @object.under_request_volume_threshold?(1)
+        refute @object.under_request_volume_threshold?(0)
+        10.times { @object.success }
+        assert @object.under_request_volume_threshold?(11)
+        refute @object.under_request_volume_threshold?(10)
+        refute @object.under_request_volume_threshold?(9)
       end
 
-      def test_successes_is_pruned
+      def test_under_request_volume_threshold_is_pruned
         now = Time.now
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-
         Timecop.freeze(now) do
-          metrics.success
-          metrics.success
-          metrics.success
-          assert_equal 3, metrics.successes
+          @object.success
+          @object.success
+          @object.success
+          assert_successes @object, 3
         end
 
-        Timecop.freeze(now + metrics.window_size_in_seconds) do
-          assert_equal 0, metrics.successes
+        Timecop.freeze(now + @object.window_size_in_seconds) do
+          @object.under_request_volume_threshold?(1)
+          assert_successes @object, 0
         end
       end
 
-      def test_failures
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        assert_equal 0, metrics.failures
+      def test_under_error_threshold_percentage
+        @object.success
+        @object.failure
+        @object.failure
+        assert @object.under_error_threshold_percentage?(68)
+        assert @object.under_error_threshold_percentage?(67)
+        refute @object.under_error_threshold_percentage?(66)
       end
 
-      def test_failures_is_pruned
+      def test_under_error_threshold_percentage_with_zero_requests
+        assert @object.under_error_threshold_percentage?(10)
+      end
+
+      def test_under_error_threshold_percentage_with_zero_failures
+        @object.success
+        assert @object.under_error_threshold_percentage?(10)
+      end
+
+      def test_under_error_threshold_percentage_is_pruned
         now = Time.now
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-
         Timecop.freeze(now) do
-          metrics.failure
-          metrics.failure
-          metrics.failure
-          assert_equal 3, metrics.failures
+          @object.success
+          @object.success
+          @object.success
+          assert_successes @object, 3
         end
 
-        Timecop.freeze(now + metrics.window_size_in_seconds) do
-          assert_equal 0, metrics.failures
-        end
-      end
-
-      def test_requests
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        assert_equal 0, metrics.requests
-      end
-
-      def test_requests_is_pruned
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        now = Time.now
-
-        Timecop.freeze(now) do
-          metrics.success
-          metrics.success
-          metrics.failure
-          assert_equal 3, metrics.requests
-        end
-
-        Timecop.freeze(now + metrics.window_size_in_seconds) do
-          assert_equal 0, metrics.requests
-        end
-      end
-
-      def test_error_percentage_returns_zero_if_zero_requests
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        assert_equal 0, metrics.error_percentage
-      end
-
-      def test_error_percentage_returns_zero_if_zero_failures
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        metrics.success
-        assert_equal 0, metrics.error_percentage
-      end
-
-      def test_error_percentage
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        metrics.success
-        metrics.failure
-        metrics.failure
-        assert_equal 67, metrics.error_percentage
-      end
-
-      def test_error_percentage_is_pruned
-        now = Time.now
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-
-        Timecop.freeze(now) do
-          metrics.success
-          metrics.failure
-          assert_equal 50, metrics.error_percentage
-        end
-
-        Timecop.freeze(now + metrics.window_size_in_seconds) do
-          assert_equal 0, metrics.error_percentage
+        Timecop.freeze(now + @object.window_size_in_seconds) do
+          @object.under_error_threshold_percentage?(1)
+          assert_successes @object, 0
         end
       end
 
       def test_reset
-        metrics = Metrics.new(window_size_in_seconds: 5, bucket_size_in_seconds: 1)
-        metrics.reset
-        assert_equal 0, metrics.successes
-        assert_equal 0, metrics.failures
+        @object.success
+        @object.failure
+        assert_successes @object, 1
+        assert_failures @object, 1
+
+        @object.reset
+
+        assert_successes @object, 0
+        assert_failures @object, 0
+      end
+
+      private
+
+      def assert_successes(metrics, expected_successes)
+        actual_successes = metrics.storage.sum(metrics.buckets, Metrics::StorageSuccessKeys)[Metrics::StorageSuccessKeys.first]
+        assert_equal expected_successes, actual_successes
+      end
+
+      def assert_failures(metrics, expected_failures)
+        actual_failures = metrics.storage.sum(metrics.buckets, Metrics::StorageFailureKeys)[Metrics::StorageFailureKeys.first]
+        assert_equal expected_failures, actual_failures
       end
     end
   end
