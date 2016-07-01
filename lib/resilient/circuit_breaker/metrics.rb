@@ -71,7 +71,7 @@ module Resilient
         requests = successes + failures
         return 0 if failures == 0 || requests == 0
 
-        ((failures / requests.to_f) * 100).round
+        (failures / requests.to_f) * 100
       end
 
       def reset

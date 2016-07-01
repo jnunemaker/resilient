@@ -133,7 +133,7 @@ module Resilient
 
       Timecop.freeze(bucket6) do
         33.times { circuit_breaker.success }
-        12.times { circuit_breaker.failure }
+        13.times { circuit_breaker.failure }
         refute circuit_breaker.allow_request?,
           debug_circuit_breaker(circuit_breaker)
       end
