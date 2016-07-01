@@ -57,16 +57,6 @@ module Resilient
 
       private
 
-      def successes
-        prune_buckets
-        @storage.sum(@buckets, :successes)[:successes]
-      end
-
-      def failures
-        prune_buckets
-        @storage.sum(@buckets, :failures)[:failures]
-      end
-
       def requests
         prune_buckets
         requests = 0
