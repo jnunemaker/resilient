@@ -117,11 +117,11 @@ module Resilient
     end
 
     def under_request_volume_threshold?
-      metrics.requests < @properties.request_volume_threshold
+      metrics.under_request_volume_threshold?(@properties.request_volume_threshold)
     end
 
     def under_error_threshold_percentage?
-      metrics.error_percentage < @properties.error_threshold_percentage
+      metrics.under_error_threshold_percentage?(@properties.error_threshold_percentage)
     end
 
     def open?

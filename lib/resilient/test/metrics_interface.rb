@@ -1,6 +1,16 @@
 module Resilient
   class Test
     module MetricsInterface
+      def test_responds_to_under_request_volume_threshold_predicate
+        assert_respond_to @object, :under_request_volume_threshold?
+        assert_equal 1, @object.method(:under_request_volume_threshold?).arity
+      end
+
+      def test_responds_to_under_error_threshold_percentage_predicate
+        assert_respond_to @object, :under_error_threshold_percentage?
+        assert_equal 1, @object.method(:under_error_threshold_percentage?).arity
+      end
+
       def test_responds_to_success
         assert_respond_to @object, :success
       end
@@ -15,22 +25,6 @@ module Resilient
 
       def test_failure_returns_nothing
         assert_nil @object.failure
-      end
-
-      def test_responds_to_successes
-        assert_respond_to @object, :successes
-      end
-
-      def test_responds_to_failures
-        assert_respond_to @object, :failures
-      end
-
-      def test_responds_to_requests
-        assert_respond_to @object, :requests
-      end
-
-      def test_responds_to_error_percentage
-        assert_respond_to @object, :error_percentage
       end
 
       def test_responds_to_reset
