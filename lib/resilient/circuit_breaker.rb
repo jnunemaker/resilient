@@ -106,13 +106,20 @@ module Resilient
     private
 
     def open_circuit
-      @opened_or_last_checked_at_epoch = Time.now.to_i
-      @open = true
+      instrument("resilient.circuit_breaker.open", key: @key) { |payload|
+        @opened_or_last_checked_at_epoch = Time.now.to_i
+        @open = true
+        payload[:open] = @open
+      }
     end
 
     def close_circuit
-      @open = false
-      @opened_or_last_checked_at_epoch = 0
+      instrument("resilient.circuit_breaker.close", key: @key) { |payload|
+        @open = false
+        payload[:open] = @open
+        payload[:interval] = Time.now.to_i - @opened_or_last_checked_at_epoch
+        @opened_or_last_checked_at_epoch = 0
+      }
       metrics.reset
     end
 

@@ -221,6 +221,12 @@ module Resilient
       circuit_breaker.success
       event = instrumenter.events.first
       refute_nil event
+      assert_equal "resilient.circuit_breaker.close", event.name
+      assert_equal "test", event.payload.fetch(:key).name
+      assert_equal false, event.payload[:open]
+      refute_nil event.payload[:interval]
+      event = instrumenter.events[1]
+      refute_nil event
       assert_equal "resilient.circuit_breaker.success", event.name
       assert_equal "test", event.payload.fetch(:key).name
       assert_equal true, event.payload[:closed_the_circuit]
