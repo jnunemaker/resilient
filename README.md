@@ -29,7 +29,7 @@ require "resilient/circuit_breaker"
 # CircuitBreaker.new as `get` keeps a registry of circuits by key to prevent
 # creating multiple instances of the same circuit breaker for a key; not using
 # `get` means you would have multiple instances of the circuit breaker and thus
-# separate state and metrics; you can read more in examples/for_vs_new.rb
+# separate state and metrics; you can read more in examples/get_vs_new.rb
 circuit_breaker = Resilient::CircuitBreaker.get("example")
 if circuit_breaker.allow_request?
   begin
