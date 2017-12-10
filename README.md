@@ -87,7 +87,7 @@ circuit_breaker = Resilient::CircuitBreaker.get("example", {
 Property                        | Default                | Notes
 --------------------------------|------------------------|--------
 **:force_open**                 | `false`                  | allows forcing the circuit open (stopping all requests)
-**:force_closed**               | `false`                  | allows ignoring errors and therefore never trip "open" (ie. allow all traffic through); normal instrumentation will still happen, thus allowing you to "test" configuration live without impact
+**:force_closed**               | `false`                  | allows ignoring errors and therefore never trip "open" (e.g. allow all traffic through); normal instrumentation will still happen, thus allowing you to "test" configuration live without impact
 **:instrumenter**               | `Instrumenters::Noop`    | what to use to instrument all events that happen (e.g.  `ActiveSupport::Notifications`)
 **:sleep_window_seconds**       | `5`                      | seconds after tripping circuit before allowing retry
 **:request_volume_threshold**   | `20`                     | number of requests that must be made within a statistical window before open/close decisions are made using stats
