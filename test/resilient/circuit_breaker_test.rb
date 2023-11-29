@@ -69,6 +69,22 @@ module Resilient
       assert_equal "object", @object.key.name
     end
 
+    def test_allow_request_when_simulating_open
+      properties = default_test_properties_options({
+        error_threshold_percentage: 51,
+      })
+      circuit_breaker = CircuitBreaker.get("test", properties)
+      circuit_breaker.success
+      circuit_breaker.failure
+
+      allowed = circuit_breaker.simulate_open do
+        circuit_breaker.allow_request?
+      end
+
+      assert !allowed, debug_circuit_breaker(circuit_breaker)
+      assert circuit_breaker.allow_request?, debug_circuit_breaker(circuit_breaker)
+    end
+
     def test_allow_request_when_under_error_threshold_percentage
       properties = default_test_properties_options({
         error_threshold_percentage: 51,

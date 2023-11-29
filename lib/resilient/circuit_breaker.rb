@@ -53,11 +53,20 @@ module Resilient
       @properties = Properties.wrap(properties)
       @open = false
       @opened_or_last_checked_at_epoch = 0
+      @force_open = false
+    end
+
+    # Simulate forcing open the circuit breaker only for the duration of the given block.
+    def simulate_open
+      @force_open = true
+      yield
+    ensure
+      @force_open = false
     end
 
     def allow_request?
       instrument("resilient.circuit_breaker.allow_request", key: @key) { |payload|
-        payload[:result] = if payload[:force_open] = @properties.force_open
+        payload[:result] = if payload[:force_open] = @force_open || @properties.force_open
           false
         else
           # we still want to simulate normal behavior/metrics like open, allow
